@@ -1,0 +1,184 @@
+<ng-include src="'/partials/common/header.html'"></ng-include>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <uib-tab heading="保单添加" select="tabShown[0] = !tabShown[0]; actions.gridResize('importGridApi'); actions.setRowsDirty(); actions.getUnitList()" deselect="tabShown[0] = !tabShown[0]">
+          <form class="form-inline custom-padding-vertical">
+            <button type="file" class="btn btn-warning" ngf-select ng-model="importFiles" ngf-change="actions.fileSelected($files, $file, $event)" ngf-multiple="false" ngf-keep="false" ngf-keep-distinct="false" accept=".csv,.xlsx" ngf-accept="'.csv,.xlsx'">导入</button>
+            <button type="button" class="btn btn-success" ng-click="actions.submit()" ng-class="{'disabled': importData.length === 0}">提交</button>
+            <button type="button" class="btn btn-success" ng-click="actions.importToggleFiltering()" ng-class="{'disabled': importData.length === 0}">过滤</button>
+            <button type="button" class="btn btn-success" ng-click="actions.iRemoveRows()" ng-class="{'disabled': importGridApi.selection.getSelectedRows().length === 0}">删除</button>
+            <button type="button" class="btn btn-success" ng-click="actions.addRow()">新增</button>
+            <!-- <button type="button" class="btn btn-success" ng-click="importGridOptions.showGridFooter = !importGridOptions.showGridFooter; $scope.importGridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);" ng-class="{'disabled': importData.length === 0}">脚注</button>
+            <button type="button" class="btn btn-success" ng-click="importGridOptions.showColumnFooter = !importGridOptions.showColumnFooter; $scope.importGridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);" ng-class="{'disabled': importData.length === 0}">列脚</button> -->
+            <!-- <button type="button" class="btn btn-success" ng-click="actions.getRows()" ng-class="{'disabled': importData.length === 0}">取行</button> -->
+            <!-- <button type="button" class="btn btn-success" ng-click="actions.flushRows()" ng-class="{'disabled': importData.length === 0}">保存</button> -->
+            
+
+            <div class="custom-padding-top">
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.inceNoIsOk, 'has-error': !incePolicy.inceNoIsOk}" ng-show="importData.length">
+                <label class="control-label" for="inceNo">保单号: </label>
+                <input type="text" class="form-control" id="inceNo" ng-model="incePolicy.inceNo"><!-- required="required" 属性需要和form元素中的action属性一起使用, 如果form中没有action, 则require不起作用-->
+                <button-clear-input input="incePolicy.inceNo"></button-clear-input>
+              </div>
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.unitIsOk, 'has-error': !incePolicy.unitIsOk}" ng-show="importData.length">
+                <!-- <label class="control-label" for="unit">投保单位: </label>
+                <input type="text" class="form-control" id="unit" ng-model="incePolicy.unit">
+                <button-clear-input input="incePolicy.unit"></button-clear-input> -->
+                <label for="unit" class="control-label">投保单位: </label>
+                <select class="form-control" id="unit" ng-model="incePolicy.unit" ng-options="unit.name for unit in config.unitList" required="required">
+                </select>
+              </div>
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.branchIsOk, 'has-error': !incePolicy.branchIsOk}" ng-show="importData.length">
+                <label class="control-label" for="branch">分公司: </label>
+                <input type="text" class="form-control" id="branch" ng-model="incePolicy.branch">
+                <button-clear-input input="incePolicy.branch"></button-clear-input>
+              </div>
+            </div>
+
+
+
+
+
+
+            <!-- <span>{{rejFiles.length && '文件格式错误!' || ''}}</span> -->
+            <!-- <span>{{incePolicy}}</span> -->
+            <!-- <span>{{malUsers}}</span> -->
+            <!-- <span>{{lastCellEdited}}</span> -->
+            <!-- <span>{{dirtyRows[0].entity.IdNo}}</span>
+            <span>{{errorRows[0].entity.IdNo}}</span> -->
+          </form>
+          <div id="importGrid" ui-grid="importGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-selection class="grid" ng-if="tabShown[0]" ng-show="importData.length"></div>
+          <!-- <div id="importGrid" ui-grid="importGridOptions" ui-grid-importer ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[1]" ng-show="importData.length"></div> -->
+        </uib-tab>
+        <uib-tab heading="保单查询" select="tabShown[1] = !tabShown[1]; actions.inceInit(); actions.gridResize('inceQueryGridApi')" deselect="tabShown[1] = !tabShown[1]">
+          <form class="form-inline custom-padding-vertical">
+            <div class="btn-group">
+              <button type="button" class="btn btn-success" ng-click="actions.inceExport()" ng-class="{'disabled': inceQueryData.length === 0}">导出保单</button>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.rowType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '所有行', value: 'all'}">所有行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '可见行', value: 'visible'}">可见行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '选中行', value: 'selected'}">选中行</a></li>
+                </ul>
+              </div>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.colType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.colType = {title: '所有列', value: 'all'}">所有列</a></li>
+                  <li><a href="" ng-click="exportOpts.colType = {title: '可见列', value: 'visible'}">可见列</a></li>
+                </ul>
+              </div>
+            </div>
+            <button type="button" class="btn btn-danger" ng-click="actions.qRemoveInces()" ng-class="{'disabled': inceQueryGridApi.selection.getSelectedRows().length === 0}">删除保单</button>
+            <button type="button" class="btn btn-success" ng-click="actions.inceQueryToggleFiltering()" ng-disabled="inceQueryData.length === 0">过滤</button>
+            <button type="button" class="btn btn-success" ng-click="actions.inceInit(true)" ng-disabled="inceQueryData.length === 0 || inceQueryIsLoading.length !== 0">刷新</button>
+          </form>
+          <div id="inceQueryGrid" ui-grid="inceQueryGridOptions" ui-grid-exporter ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[1]"></div>
+        </uib-tab>
+        <uib-tab heading="养老添加" select="tabShown[8] = !tabShown[8]" deselect="tabShown[8] = !tabShown[8]">
+
+          <form class="form-inline custom-padding-vertical">
+            <button type="file" class="btn btn-warning" ngf-select ng-model="importYljFiles" ngf-change="actions.fileYljSelected($files, $file, $event)" ngf-multiple="false" ngf-keep="false" ngf-keep-distinct="false" accept=".csv,.xlsx" ngf-accept="'.csv,.xlsx'">导入</button>
+            <button type="button" class="btn btn-success" ng-click="actions.submitYlj()" ng-class="{'disabled': importYljData.length === 0}">提交</button>
+            <button type="button" class="btn btn-success" ng-click="actions.iRemoveYljRows()" ng-class="{'disabled': importYljGridApi.selection.getSelectedRows().length === 0}">删除</button>
+
+
+            
+
+
+
+            <div class="custom-padding-top">
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.inceNoIsOk, 'has-error': !incePolicy.inceNoIsOk}" ng-show="importYljData.length">
+                <label class="control-label" for="inceYljNo">保单号: </label>
+                <input type="text" class="form-control" id="inceYljNo" ng-model="incePolicy.inceYljNo"><!-- required="required" 属性需要和form元素中的action属性一起使用, 如果form中没有action, 则require不起作用-->
+                <button-clear-input input="incePolicy.inceYljNo"></button-clear-input>
+              </div>
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.unitIsOk, 'has-error': !incePolicy.unitIsOk}" ng-show="importYljData.length">
+                <!-- <label class="control-label" for="unit">投保单位: </label>
+                <input type="text" class="form-control" id="unit" ng-model="incePolicy.unit">
+                <button-clear-input input="incePolicy.unit"></button-clear-input> -->
+                <label for="unitYlj" class="control-label">投保单位: </label>
+                <select class="form-control" id="unitYlj" ng-model="incePolicy.unitYlj" ng-options="unitYlj.name for unitYlj in config.unitList" required="required">
+                </select>
+              </div>
+              <div class="form-group has-feedback" ng-class="{'has-success': incePolicy.branchIsOk, 'has-error': !incePolicy.branchIsOk}" ng-show="importYljData.length">
+                <label class="control-label" for="branchYlj">分公司: </label>
+                <input type="text" class="form-control" id="branchYlj" ng-model="incePolicy.branchYlj">
+                <button-clear-input input="incePolicy.branchYlj"></button-clear-input>
+              </div>
+            </div>
+
+
+          </form>
+          <div id="importYljGrid" ui-grid="importYljGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-selection class="grid" ng-if="tabShown[8]" ng-show="importYljData.length"></div>
+
+        </uib-tab>
+        <uib-tab heading="理赔操作" select="tabShown[2] = !tabShown[2]" deselect="tabShown[2] = !tabShown[2]">
+          <div class="form-group">
+            <iframe id="auditlist" src="intface/auditlist.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 780px;"></iframe>
+          </div>
+        </uib-tab>
+        <uib-tab heading="内容发布" select="tabShown[3] = !tabShown[3];" deselect="tabShown[3] = !tabShown[3]" ng-if="true">
+          <!-- <div class="container-fluid"> -->
+          <post-editor ng-if="tabShown[3]" post="post" posts="posts" config="config" temp="temp" params="params"></post-editor>
+        </uib-tab>
+        <uib-tab heading="信息修改" select="tabShown[4] = !tabShown[4]" deselect="tabShown[4] = !tabShown[4]">
+          <iframe src="intface/useredit.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+        <uib-tab heading="账户操作" select="tabShown[5] = !tabShown[5]; actions.userInit()" deselect="tabShown[5] = !tabShown[5]">
+          <form class="form-inline custom-padding-vertical">
+            <button type="button" class="btn btn-success" ng-click="actions.addNewUser()">新增账户</button>
+            <button type="button" class="btn btn-success" ng-click="actions.qRemoveUsers()" ng-class="{'disabled': userQueryGridApi.selection.getSelectedRows().length === 0}">删除账户</button>
+          </form>
+          <div id="userQueryGrid" ui-grid="userQueryGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[5]"></div>
+        </uib-tab>
+        <uib-tab heading="专员授权" select="tabShown[6] = !tabShown[6]; actions.servInit()" deselect="tabShown[6] = !tabShown[6]">
+          <form class="form-inline custom-padding-vertical">
+            <button type="button" class="btn btn-success" ng-click="actions.authorizeModal()">新增授权</button>
+          </form>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>授权对象</th>
+                <th>工号</th>
+                <th>手机号</th>
+                <th>收单单位</th>
+                <!-- <th>授权到期</th> -->
+                <!-- <th>授权方式</th> -->
+                <!-- <th>授权状态</th> -->
+                <th>授权撤销</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="s in serv.list">
+                <th>{{$index + 1}}</th>
+                <td>{{s.personalInfo.name}}</td>
+                <td>{{s.personalInfo.employeeId}}</td>
+                <td>{{s.mobile}}</td>
+                <td>{{s.extInfo.yiyangbaoHealInce.authorizedBy[0].unitName}}</td>
+                <!-- <td>{{s.extInfo.yiyangbaoHealInce.authorizedBy[0].duration | date : 'YY年M月d日'}}</td> -->
+                <!-- <td>{{s.extInfo.yiyangbaoHealInce.authorizedBy[0].times}}</td> -->
+                <!-- <td>{{s.extInfo.yiyangbaoHealInce.authorizedBy[0].isRevoked | boolean}}</td> -->
+                <td><button type="button" class="btn btn-sm btn-danger no-padding-vertical" ng-click="actions.authRevoke($index)">撤销</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </uib-tab>
+        <uib-tab heading="账户信息" select="tabShown[7] = !tabShown[7]" deselect="tabShown[7] = !tabShown[7]">
+          <iframe src="intface/accountinfo.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes" class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

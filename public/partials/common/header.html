@@ -1,0 +1,67 @@
+<div class="container-fluid" ng-controller="header">
+  <div class="row top-bar">
+      <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0">
+        <span class="small custom-middle">您好, 欢迎来到VIP服务中心, 祝您生活愉快! </span>
+        <div class="pull-right">
+          <span class="small">{{fullname}} {{gender}}, 您好! </span>
+          <a href="#/userhome" class="btn btn-link btn-sm">进入用户中心</a>
+          <button type="button" class="btn btn-link btn-sm" ng-click="actions.logout()">退出登录</button>
+        </div>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 col-xs-3 col-md-offset-1 col-xs-offset-0">
+      <div class="page-header">
+        <h1><a class="cutsom-left" href="#/homepage"> </a><!-- <small>杭州 城市切换</small> --></h1>
+      </div>
+    </div>
+    <div class="col-md-3 col-xs-3">
+      <div class="page-header">
+        <!-- <form class="navbar-form navbar-right" role="search"> -->
+          <div class="input-group custom-padding-top">
+            <input type="text" class="form-control" aria-label="Text input with segmented button dropdown" ng-model="keyword" placeholder="搜索{{selected.title}}...">
+            <div class="input-group-btn" uib-dropdown>
+              <button type="button" class="btn btn-warning">搜索</button>
+              <button type="button" class="btn btn-warning uib-dropdown-toggle" uib-dropdown-toggle>
+                <span class="caret"></span>
+                <span class="sr-only">Split button!</span>
+              </button>
+              <ul class="uib-dropdown-menu" role="menu">
+                <li><a href="" ng-click="selected = {title: '药品', code: 'drug'}">药品</a></li>
+                <li><a href="" ng-click="selected = {title: '服务', code: 'serv'}">服务</a></li>
+                <li><a href="" ng-click="selected = {title: '活动', code: 'act'}">活动</a></li>
+                <li class="divider"></li>
+                <li><a href="" ng-click="selected = {title: '全部', code: 'all'}">全部</a></li>
+              </ul>
+            </div>
+          </div>
+        <!-- </form> -->
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0">
+            <ul class="nav navbar-nav">
+              <li ng-class="{'active': stateUrl === 'homepage'}" ng-if="access.user"><a ng-href="{{stateUrl === 'homepage'? '' : '#/homepage'}}">合作站点</a></li>
+              <!-- <li ng-class="{'active': stateUrl === 'pharmacy'}" ng-if="access.user"><a ng-href="{{stateUrl === 'pharmacy'? '' : '#/pharmacy'}}">网上药店</a></li> -->
+              <!-- <li ng-class="{'active': stateUrl === 'healthreserve'}" ng-if="access.user"><a ng-href="{{stateUrl === 'healthreserve'? '' : '#/healthreserve'}}">疗养预约</a></li> -->
+              <!-- <li ng-class="{'active': stateUrl === 'examreserve'}" ng-if="access.user"><a ng-href="{{stateUrl === 'examreserve'? '' : '#/examreserve'}}">体检预约</a></li> -->
+              <!-- <li ng-class="{'active': stateUrl === 'vipmedical'}" ng-if="access.user"><a ng-href="{{stateUrl === 'vipmedical'? '' : '#/vipmedical'}}">高端医疗</a></li> -->
+              <li ng-class="{'active': stateUrl === 'mobimedical'}" ng-if="access.user"><a ng-href="{{stateUrl === 'mobimedical'? '' : '#/mobimedical'}}">移动医疗</a></li>
+              <li ng-class="{'active': stateUrl === 'healthwiki'}" ng-if="access.user"><a ng-href="{{stateUrl === 'healthwiki'? '' : '#/healthwiki'}}">健康资讯</a></li>
+              <li ng-class="{'active': stateUrl === 'userhome'}" ng-if="access.userOnly"><a ng-href="{{stateUrl === 'userhome'? '' : '#/userhome'}}">我的中心</a></li>
+              <li ng-class="{'active': stateUrl === 'servhome'}" ng-if="access.serv"><a ng-href="{{stateUrl === 'servhome'? '' : '#/servhome'}}">服务专员</a></li>
+              <li ng-class="{'active': stateUrl === 'medihome'}" ng-if="access.medi"><a ng-href="{{stateUrl === 'medihome'? '' : '#/medihome'}}">医药机构</a></li>
+              <li ng-class="{'active': stateUrl === 'incehome'}" ng-if="access.ince"><a ng-href="{{stateUrl === 'incehome'? '' : '#/incehome'}}">保险公司</a></li>
+              <li ng-class="{'active': stateUrl === 'unithome'}" ng-if="access.unit"><a ng-href="{{stateUrl === 'unithome'? '' : '#/unithome'}}">投保公司</a></li>
+              <li ng-class="{'active': stateUrl === 'admin'}" ng-if="access.admin"><a ng-href="{{stateUrl === 'admin'? '' : '#/admin'}}">管理员</a></li>
+            </ul>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </nav>
+  </div>
+</div>

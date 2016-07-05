@@ -1,0 +1,158 @@
+<ng-include src="'/partials/common/header.html'"></ng-include>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <uib-tab heading="消费记录" select="tabShown[0] = !tabShown[0]; actions.consInit()" deselect="tabShown[0] = !tabShown[0]" ng-if="false">
+          <!-- <div id="consQueryGrid" ui-grid="consQueryGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[0]"></div> -->
+        </uib-tab>
+        <uib-tab heading="支付管理" select="tabShown[4] = !tabShown[4]; actions.outConsPaying()" deselect="tabShown[4] = !tabShown[4]">
+          <form class="form-inline custom-padding-vertical">
+            <button type="button" class="btn btn-danger" ng-click="actions.outConsPaying()">等待支付</button>
+            <button type="button" class="btn btn-warning" ng-click="actions.consList()">销售记录</button>
+            <button type="button" class="btn btn-info" ng-click="actions.consRevoked()" ng-if="cons.list[0]._id">当天退款</button>
+            <div class="form-group has-feedback" ng-if="cons.list[0]._id">
+              <!-- <label class="control-label" for="consQuery">消费查询: </label> -->
+              <input type="text" class="form-control" id="consQuery" ng-model="cons.consQuery.$" placeholder="手机/单据/卡号"><!-- required="required" 属性需要和form元素中的action属性一起使用, 如果form中没有action, 则require不起作用-->
+              <button-clear-input input="cons.consQuery"></button-clear-input>
+              <!-- <button type="button" class="btn btn-success" ng-click="actions.consQuery()">消费查询</button> -->
+            </div>
+          </form>
+          <div class="table-responsive">
+            <h1 ng-if="cons.errMsg">{{cons.errMsg}}</h1>
+            <h3 ng-if="error.checkError">{{error.checkError}}</h3>
+            <table class="table table-hover" ng-if="cons.list[0].num">
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>门店号</th>
+                  <th>单据号</th>
+                  <th>颐养卡号</th>
+                  <th>支付金额</th>
+                  <th>当前余额</th>
+                  <th>消费时间</th>
+                  <th>消费状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="payment in cons.list">
+                  <th>{{$index + 1}}</th>
+                  <td>{{payment.md_uid}}</td>
+                  <td>{{payment.num}}</td>
+                  <td>{{payment.yiyang_no | yiyangNo}}</td>
+                  <td>{{payment.yiyang_amount | currency: '￥'}}</td>
+                  <td>{{payBill.available | currency: '￥'}}</td>
+                  <td>{{payment.sale_date | date : 'M月d日 HH:mm:ss' : 'UTC'}}</td>
+                  <td><button type="button" class="btn btn-sm btn-danger no-padding-vertical" ng-click="actions.check($index)" ng-if="$index === 0" ng-disabled="payment.yiyang_amount > payBill.available">{{payment.yiyang_amount > payBill.available && '余额不足' || '确认支付'}}</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-hover" ng-if="cons.list[0]._id">
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>门店号</th>
+                  <th>单据号</th>
+                  <th>颐养卡号</th>
+                  <th>支付金额</th>
+                  <th>消费时间</th>
+                  <th>消费状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="payment in cons.list | filter:cons.consQuery:false">
+                  <th>{{$index + 1}}</th>
+                  <td>{{payment.outShopUid}}</td>
+                  <td>{{payment.outRecptNum}}</td>
+                  <td><span ng-show="false">{{payment.seriesNum}}</span></td>
+                  <td>{{payment.money | currency: '￥'}}</td>
+                  <td>{{payment.time | date : 'M月d日 HH:mm:ss'}}</td>
+                  <td>{{(payment.status.isAudited && '已审核') || (payment.status.isRevoked && '已退款') || (payment.status.isSubmitted && '已支付')}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </uib-tab>
+        <uib-tab heading="扫码支付" select="tabShown[5] = !tabShown[5]" deselect="tabShown[5] = !tabShown[5]">
+
+          <div class="custom-padding-top">
+            <h3 ng-if="error.checkError">{{error.checkError}}</h3>
+            <form>
+              <div class="form-group custom-middle">
+                <label for="barcode" class="col-sm-2 control-label">扫码支付</label>
+                <div class="col-sm-10">
+
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="barcode" placeholder="扫码获取支付码" ng-model="saoma.barcode" ng-change="smActions.getSm()">
+                    <div class="input-group-addon">可用金额:{{payBill.available || 0.00}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" ng-class="{'has-error': payBill.money > payBill.available}">
+                <label for="money" class="col-sm-2 control-label">消费金额</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" id="money" ng-model="payBill.money" placeholder="请输入消费金额">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="money" class="col-sm-2 control-label">备注信息</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control" ng-model="payBill.note" rows="3"></textarea>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="button" class="btn btn-primary" ng-class="{'disabled': !payBill.money || payBill.available === undefined || payBill.money > payBill.available}" ng-click="smActions.check()">确认支付</button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+
+        </uib-tab>
+        <!-- <uib-tab heading="消费查询" select="tabShown[1] = !tabShown[1]" deselect="tabShown[1] = !tabShown[1]">
+          
+        </uib-tab> -->
+        <uib-tab heading="内容发布" select="tabShown[2] = !tabShown[2]; actions.postInit()" deselect="tabShown[2] = !tabShown[2]">
+        <!-- <uib-tab heading="内容发布" select="tabShown[2] = !tabShown[2]; actions.postInit()" deselect="tabShown[2] = !tabShown[2]" ng-if="false"> -->
+          <!-- <div class="container-fluid"> -->
+          <div class="container-fluid" ng-if="tabShown[2]">
+            <form>
+              <div class="form-group has-feedback" ng-class="{'has-success': post.title, 'has-error': !post.title}">
+                <label class="control-label" for="title">标题: </label>
+                <input type="text" class="form-control" id="title" name="title" ng-model="post.title" maxlength="12">
+                <button-clear-input input="post.title"></button-clear-input>
+              </div>
+              <!-- 类型：<select name='type'>
+                  <option value="aaa">aaa</option>
+              </select>
+              动作：
+              <input type="text" list="actions" size="10" name="action"/><br />
+              标签：<br />
+              <input type="text" name="tag1" />
+              <input type="text" name="tag2" />
+              <input type="text" name="tag3" /><br /> -->
+              <div class="form-group has-feedback has-success">
+                <label class="control-label" for="post">正文: </label>
+                <!-- 加载UEditor编辑器的容器 -->
+                <!-- <script id="container" name="post" type="text/plain"></script> -->
+                <div class="ueditor" name="post" ng-model="post.content" ready="ueReady" config="ueConfig" required><!-- 这个angular ueditor封装的元素中不能出现id属性, 否则就报错Cannot read property 'length' of undefined, Cannot set property 'innerHTML' of null --></div>
+              </div>
+              <button type="button" class="btn btn-success" ng-click="actions.post()">发表</button>
+              <button type="button" class="btn btn-info" ng-click="actions.preview()">预览</button>
+              <label class="h4">{{error.postError}}</label>
+            </form>
+          </div>
+        </uib-tab>
+        <uib-tab heading="信息修改" select="tabShown[3] = !tabShown[3]" deselect="tabShown[3] = !tabShown[3]">
+          <iframe src="intface/useredit.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

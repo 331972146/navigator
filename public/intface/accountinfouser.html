@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>帐户信息</title>
+<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var accinfo = "";
+
+	var aaaa ="";
+	//获取登录信息
+	$.get(baseurl + "/user/getInfo?token=" + sessionStorage.token ,function(result){
+		accinfo = result.results;
+		$.get(baseurl + "/user/getAccInfo?token=" + sessionStorage.token,function(result){
+			var insuobj = result.results.ince;
+			var amount = 0;//帐户总金额.
+			var consumed = 0;//已消费金额.
+			var freeze = 0;//已冻结金额.
+			var available = 0;//实际可用余额
+
+        	amount += (!!insuobj.amount) ? insuobj.amount : 0;
+        	available += (!!insuobj.available) ? insuobj.available : 0;
+        	freeze += (!!insuobj.freeze) ? insuobj.freeze : 0;
+        	consumed = amount - available - freeze;
+			//for(var key in insuobj){
+            //	amount += (insuobj[key].amount !== false) ? insuobj[key].amount : 0;
+            //	consumed += (insuobj[key].consumed !== false) ? insuobj[key].consumed : 0;
+
+        	//}  
+        	$("#amount").html("￥" + Number(amount).toFixed(2));
+        	$("#consumed").html("￥" + Number(consumed).toFixed(2));
+        	$("#freeze").html("￥" + Number(freeze).toFixed(2));
+
+        	$("#sumresult").html("￥" + Number(available).toFixed(2));
+			//alert(result.results.length);
+		});
+	});
+});
+</script>
+</head>
+<body>
+<div class=".container" style="margin-top:20px;width:80%;">
+	<dl class="dl-horizontal">
+	  <dt>帐户总金额</dt>
+	  <dd  id="amount">...</dd>
+	</dl>
+	<dl class="dl-horizontal">
+	  <dt>已消费金额</dt>
+	  <dd  id="consumed">...</dd>
+	</dl>
+	<dl class="dl-horizontal">
+	  <dt>已冻结金额</dt>
+	  <dd  id="freeze">...</dd>
+	</dl>
+	<dl class="dl-horizontal">
+	  <dt>实际可用额</dt>
+	  <dd  id="sumresult">...</dd>
+	</dl>
+</div>
+</body>
+</html>

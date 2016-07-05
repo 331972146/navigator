@@ -1,0 +1,78 @@
+<ng-include src="'/partials/common/header.html'"></ng-include>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <uib-tab heading="账户信息" select="tabShown[0] = !tabShown[0]" deselect="tabShown[0] = !tabShown[0]">
+          <iframe src="intface/accountinfo.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+        <uib-tab heading="保单查询" select="tabShown[1] = !tabShown[1]; actions.inceInit()" deselect="tabShown[1] = !tabShown[1]">
+          <form class="form-inline custom-padding-vertical">
+            <div class="btn-group">
+              <button type="button" class="btn btn-success" ng-click="actions.inceExport()" ng-class="{'disabled': inceQueryData.length === 0}">导出保单</button>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.rowType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '所有行', value: 'all'}">所有行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '可见行', value: 'visible'}">可见行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '选中行', value: 'selected'}">选中行</a></li>
+                </ul>
+              </div>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.colType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.colType = {title: '所有列', value: 'all'}">所有列</a></li>
+                  <li><a href="" ng-click="exportOpts.colType = {title: '可见列', value: 'visible'}">可见列</a></li>
+                </ul>
+              </div>
+            </div>
+          </form>
+          <div id="inceQueryGrid" ui-grid="inceQueryGridOptions" ui-grid-exporter ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[1]"></div>
+        </uib-tab>
+        <!-- <uib-tab heading="内容发布" select="tabShown[2] = !tabShown[2]" deselect="tabShown[2] = !tabShown[2]">
+          
+        </uib-tab> -->
+        <uib-tab heading="团体申请" select="tabShown[2] = !tabShown[2]" deselect="tabShown[2] = !tabShown[2]">
+            <div class="btn-group" style="padding: 0px 0px 5px 15px">
+              <button type="button" class="btn btn-success" onclick='javascript:document.getElementById("unitapply").contentWindow.printdocument();' style="text-align:center;">打印报表</button>
+
+            </div>
+
+            <div class="form-group">
+              <iframe id="unitapply" src="intface/unitapply.html" frameborder="0" marginheight="0" marginwidth="0" class="col-md-12" style="height: 750px;"></iframe>
+            </div>
+        </uib-tab>
+
+        <uib-tab heading="个人申请" select="tabShown[3] = !tabShown[3]" deselect="tabShown[3] = !tabShown[3]">
+
+          <form class="form-inline custom-padding-vertical" style="padding: 0px 0px 5px 15px">
+            <button type="button" class="btn btn-success" onclick='javascript:document.getElementById("userpersonapply").contentWindow.saveform();' style="text-align:center;">保存申请</button>
+            <button type="button" class="btn btn-success" onclick='javascript:document.getElementById("userpersonapply").contentWindow.printdocument();' style="text-align:center;">打印申请</button>
+            <button type="button" class="btn btn-inverse" onclick='javascript:document.getElementById("userpersonapply").contentWindow.resetform();'>重置</button>
+
+            <div class="form-group has-feedback">
+              <input type="text" class="form-control" id="idnostr" value="" placeholder="输入18位身份证号码"/><button type="button" class="btn btn-success" onclick='javascript:document.getElementById("userpersonapply").contentWindow.getidnoinfo(document.getElementById("idnostr").value);' style="text-align:center;">获取申请信息</button>
+            </div>
+          </form>
+
+          <div class="form-group">
+            <iframe id="userpersonapply" src="intface/userapplyagent.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 800px;"></iframe>
+          </div>
+        </uib-tab>
+
+
+
+        <uib-tab heading="信息修改" select="tabShown[4] = !tabShown[4]" deselect="tabShown[4] = !tabShown[4]">
+          <iframe src="intface/useredit.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

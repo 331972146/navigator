@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+    <h4 class="modal-title">文章发布预览</h4>
+    <!-- <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">中国好货商品发布预览</span></div> -->
+    <!-- <span class="h3">服务中心</span><small>请登录</small> -->
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <!-- <div class="col-md-6 col-xs-12 no-padding margin-bottom">
+
+        </div> -->
+        <div class="col-md-offset-1 col-md-10 col-xs-12 no-padding margin-bottom">
+            <h2 class="text-center">{{post.title}}</h2>
+            <h5 class="text-center text-muted">{{post.subTitle}}</h5>
+            <h6 class="text-center text-muted custom-padding-vertical"><span>时间: {{post.time | date: 'yyyy-MM-dd hh:mm:ss'}}</span><span class="cutsom-left">来源: {{post.source}}</span></h6>
+            <div class="word-break custom-padding-vertical" ng-bind-html="post.trustCont"></div>
+        </div>
+    </div>
+    <!-- <button type="button" class="btn btn-success" ng-click="actions.submit()">发布</button>
+    <button type="button" class="btn btn-info" ng-click="actions.cancel()">返回</button> -->
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="actions.submit()">发布</button>
+    <button type="button" class="btn btn-info" ng-click="actions.cancel()">返回</button>
+</div>

@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<title>个人批次理赔申请书</title>
+<link rel="stylesheet" type="text/css" href="css/ejosoftui-framework.css" />
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formfill.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formserialize.js"></script>
+<link type="text/css" rel="stylesheet" href="styles/core.css"/>
+<script src="scripts/popup_layer.js" type="text/javascript" language="javascript"></script>
+</head>
+<script type="text/javascript">
+var accInfo = "";
+var audInfo = "";
+var consInfo = "";
+var rownum = 1;
+var receiptImg = {};
+$(document).ready(function(){
+	//获取登录信息
+	//获取自身保单
+	getlist({ 
+		token:sessionStorage.token,
+		consType: "self",
+        options: {skip: 0}
+	}, "show")
+
+	$.get(baseurl + "/user/getInfo?token=" + sessionStorage.token ,function(result){
+		accInfo = result.results;
+		audInfo = accInfo.extInfo.yiyangbaoHealInce.authorizedBy;
+		//获取授权保单
+		var ai, ailen = audInfo.length;
+		for(ai=0; ai < ailen; ai++){
+			if(!audInfo[ai].isRevoked){//判断是否取消授权
+				getlist({ 
+					token:sessionStorage.token,
+					servId : audInfo[ai].servId,
+					unitId : audInfo[ai].unitId,
+					inceGenNum : audInfo[ai].inceGenNum,
+					consType: "self",
+			        options: {skip: 0}
+				}, "hide")
+			}
+		}		
+	});
+})
+
+function getlist(jsonStr, btnstatus){
+	$.post(baseurl + "/cons/getList", jsonStr, function(result,text){
+		consInfo = result.results;
+
+		var i, arrlen = consInfo.length;
+		for (i=0;i<arrlen;i++) {
+			var tabobj = $("#tr-audit-list").clone();
+			tabobj.find("#tabNo").html(rownum);
+			if(consInfo[i].unitId && consInfo[i].unitId.personalInfo && consInfo[i].unitId.personalInfo.name)
+				tabobj.find("#unitName").html(consInfo[i].unitId.personalInfo.name);
+			if(consInfo[i].inceId && consInfo[i].inceId.personalInfo && consInfo[i].inceId.personalInfo.name)
+				tabobj.find("#inceName").html(consInfo[i].inceId.personalInfo.name);
+			if(consInfo[i].servId && consInfo[i].servId.personalInfo && consInfo[i].servId.personalInfo.name)
+				tabobj.find("#servName").html(consInfo[i].servId.personalInfo.name);
+			tabobj.find("#genNum").html(consInfo[i].inceGenNum);
+			if(consInfo[i].userId && consInfo[i].userId.personalInfo && consInfo[i].userId.personalInfo.name)
+				tabobj.find("#realName").html(consInfo[i].userId.personalInfo.name);
+			if(consInfo[i].consumer && consInfo[i].consumer.relation){
+				tabobj.find("#consumer-relation").html(consInfo[i].consumer.relation);
+				tabobj.find("#consumer-name").html(consInfo[i].consumer.name);
+			}
+			if(consInfo[i].receiptImg.length){
+				receiptImg[consInfo[i]._id] = consInfo[i].receiptImg;
+
+				tabobj.find("#showphoto").attr("value",consInfo[i]._id).attr("incePolicyId",consInfo[i].incePolicyId).show();
+			}
+
+
+			//将ID设置和和记录_id有关
+			tabobj.find("#mediTypeText").html(consInfo[i].mediType.amountText);
+			tabobj.find("#money").html(consInfo[i].money);
+			tabobj.find("#refundAmount").val(( (consInfo[i].refundAmount && ((consInfo[i].refundAmount.secondAudit && consInfo[i].refundAmount.secondAudit.amount) || consInfo[i].refundAmount.firstAudit.amount ) ) || consInfo[i].money)).attr("id","refundAmount_" + consInfo[i]._id);
+			//tabobj.find("#money").val(consInfo[i].money).attr("id","money_" + consInfo[i]._id);
+			tabobj.find("#amount").val(consInfo[i].receiptTotalAmount).attr("id","amount_" + consInfo[i]._id);
+
+			tabobj.find("#firstaudit").attr("value",consInfo[i]._id).attr("incePolicyId",consInfo[i].incePolicyId);
+			tabobj.find("#secondaudit").attr("value",consInfo[i]._id).attr("incePolicyId",consInfo[i].incePolicyId);
+			tabobj.find("#backaudit").attr("value",consInfo[i]._id).attr("incePolicyId",consInfo[i].incePolicyId);
+			if(consInfo[i].visitDate){
+				var sdate = new Date(consInfo[i].visitDate.start);
+				var edate = new Date(consInfo[i].visitDate.end);
+
+				var sday = sdate.getFullYear() + "-" + ((sdate.getMonth() + 1) < 10 ? '0' + (sdate.getMonth() + 1) : (sdate.getMonth() + 1)) + "-" + sdate.getDate();
+				var eday = edate.getFullYear() + "-" + ((edate.getMonth() + 1) < 10 ? '0' + (edate.getMonth() + 1) : (edate.getMonth() + 1)) + "-" + edate.getDate();
+
+				tabobj.find("#visitDate").html(sday + "<br />至<br />" + eday);
+			}
+			//初审授权，无复审权限
+
+			//按钮状态控制
+			var isSubmitted = consInfo[i].status.isSubmitted;  //刚提交
+			var isRevoked = consInfo[i].status.isRevoked; 		//退回
+			var isAudited = consInfo[i].status.isAudited;		//初审
+			var isDone = consInfo[i].status.isDone;				//结束
+				var btnStr = btnstatus;
+
+			tabobj.find("#firstaudit").show();
+			tabobj.find("#secondaudit").show();
+			tabobj.find("#backaudit").show();
+
+			if(isDone === true || isRevoked === true){
+				tabobj.find("#firstaudit").hide();
+				tabobj.find("#secondaudit").hide();
+				tabobj.find("#backaudit").hide();
+				if(isDone)
+					tabobj.find("#statusbutton").html("复审通过");
+				else if(isRevoked)
+					tabobj.find("#statusbutton").html("退回");
+			}else if(isAudited === true && btnstatus == "show"){
+				tabobj.find("#firstaudit").hide();
+
+			}else if(isAudited === true && btnstatus == "hide"){
+				tabobj.find("#firstaudit").hide();	
+				tabobj.find("#secondaudit").hide();	
+				tabobj.find("#backaudit").hide();
+			}else if(isAudited === false && btnstatus == "show"){
+				tabobj.find("#secondaudit").hide();	
+				//tabobj.find("#backaudit").hide();
+			}else if(btnstatus == "hide"){
+				tabobj.find("#secondaudit").hide();	
+			}
+
+
+			$("#tab-audit-list").append(tabobj.show());
+
+			rownum++;//序号
+		}
+	})
+	.error(function(result,text){ 
+		alert(text +" | " + result.responseText);
+		//succinfo2("mobile", result.responseText, text); 
+	});
+}
+
+function saveaudit(ths){
+
+	var id = ths.value;
+	var moneyvalue = $("#refundAmount_" + id).val();
+	var amountvalue = $("#amount_" + id).val();
+
+    var jsonStr=null;
+    var jsonStr2=null;
+    if(ths.id == "firstaudit"){
+	    jsonStr = {
+	    	token:sessionStorage.token, 
+	    	_id: ths.value,
+	    	set:{'status.isRevoked': false, 'status.isAudited': true, 'status.isDone': false,refundAmount:moneyvalue,receiptTotalAmount:amountvalue},
+	    	flg: 'faudit'
+	    };//初
+
+	    jsonStr2 = {
+	    	token:sessionStorage.token, 
+	    	_id: $(ths).attr("incePolicyId"),
+	    	freeze:moneyvalue
+	    };
+	}
+	else if(ths.id== "secondaudit"){
+	    jsonStr = {
+	    	token:sessionStorage.token, 
+	    	_id: ths.value,
+	    	set:{'status.isRevoked': false, 'status.isAudited': true, 'status.isDone': true,refundAmount:moneyvalue,receiptTotalAmount:amountvalue},
+	    	flg: 'saudit'
+	    };//复
+
+	    jsonStr2 = {
+	    	token:sessionStorage.token, 
+	    	_id: $(ths).attr("incePolicyId"),
+	    	unfreeze:1, 
+	    	final:moneyvalue	    	
+	    };
+	}
+	else{
+	    jsonStr = {
+	    	token:sessionStorage.token, 
+	    	_id: ths.value,
+	    	set:{'status.isRevoked': true, 'status.isAudited': false, 'status.isDone': false},
+	    	flg: 'revoke'
+	    };//退
+	}
+
+	$.post(baseurl + "/cons/updateOne", jsonStr, function(result,text){
+		/*if(text=="success") {
+			if(jsonStr2 != null){
+				$.post(baseurl + "/ince/updateOne", jsonStr2, function(result,text){
+					if(text=="success") {	
+						window.location.reload();
+					}
+				});
+			}
+			else{
+				window.location.reload();
+			}
+		}*/
+		window.location.reload();
+	})
+	.error(function(result,text){ 
+		alert(text +" | " + result.responseText);
+		//succinfo2("mobile", result.responseText, text); 
+	});
+}
+
+function showphoto(ths){
+	var id = ths.value;
+	var rimgobj = receiptImg[id];
+	if(!!receiptImg[id]){
+		$("#imgphoto").empty();
+		for(var i=0; i < rimgobj.length; i++){
+			$("#imgphoto").append("<img src='" + rimgobj[i].Url  + "'  alt='" + rimgobj[i].title + "' style='width: 50px; height: 50px;cursor:pointer;margin: 2px;' onclick=javascript:showopen('" + rimgobj[i].Url + "') />");
+		}
+
+		new PopupLayer({trigger:"#ele1",popupBlk:"#blk1",closeBtn:"#close1"});
+		$("#ele1").click();
+	}
+
+}
+function showopen(url){
+	window.open(url);
+}
+</script>
+<body>
+<table id="tab-audit-list" class="form-table2" cellpadding="0" cellspacing="1" border="0">
+	<tr>
+		<th style="width:30px; height: 25px; text-align: center">序号</th>
+		<th style="text-align: center">投保单位</th>
+		<th id="ele1" style="text-align: center">保险公司</th>
+		<th style="text-align: center">服务专员</th>
+		<th style="text-align: center">总保单号</th>
+		<th style="width: 80px; text-align: center">保单用户</th>
+		<th style="width: 50px; text-align: center">亲属关系</th>
+		<th style="width: 50px; text-align: center">亲属姓名</th>
+		<th style="width: 80px; text-align: center">消费金额</th>
+		<th style="width: 50px; text-align: center">类型</th>
+		<th style="width: 50px; text-align: center">报销金额</th>
+		<th style="width: 50px; text-align: center">票据数量</th>
+		<th style="width: 100px; text-align: center">消费日期</th>
+		<th style="width: 60px; text-align: center">审核</th>
+		<th style="width: 30px; text-align: center">照片</th>		
+	</tr>
+	<tr id="tr-audit-list" style="display:none;">
+		<td id="tabNo" style="height: 25px; text-align: center">&nbsp;</td>
+		<td id="unitName">&nbsp;</td>
+		<td id="inceName">&nbsp;</td>
+		<td id="servName">&nbsp;</td>
+		<td id="genNum">&nbsp;</td>
+		<td id="realName">&nbsp;</td>
+		<td id="consumer-relation">&nbsp;</td>
+		<td id="consumer-name">&nbsp;</td>
+		<td id="money">&nbsp;</td>
+		<td id="mediTypeText">&nbsp;</td>
+		<td ><input id="refundAmount" type="text" style="width: 50px;height: 25px;" /></td>
+		<td ><input id="amount" type="text" style="width: 40px;height: 25px;" /></td>
+		<td id="visitDate">&nbsp;</td>
+		<td id="statusbutton" style="text-align: center;">
+			<button type="button" id="firstaudit" value="" value2="222" incePolicyId="eee" onclick="javascript:saveaudit(this)" style="width: 60px; height: 25px; margin: 5px; 0;">初审</button>
+			<button type="button" id="secondaudit" value="" incePolicyId="" onclick="javascript:saveaudit(this)" style="width: 60px; height: 25px; margin: 5px; 0;">复审</button>
+			<button type="button" id="backaudit" value="" incePolicyId="" onclick="javascript:saveaudit(this)" style="width: 60px; height: 25px; margin: 5px; 0;">退回</button>
+		</td>
+		<td>
+			<button type="button" id="showphoto" value="" onclick="javascript:showphoto(this)" style="width: 30px; height: 25px; margin: 5px; 0; display: none;">查看</button>
+		</td>
+	</tr>
+</table>
+<div id="blk1" class="blk" style="display:none;">
+            <div class="head"><div class="head-right"></div></div>
+            <div class="main">
+                <h2>审核单据</h2>
+                <a href="javascript:void(0)" id="close1" class="closeBtn" style="position:absolute;top:10px;right:10px;display:block;width:60px;padding:4px 0;text-align:center;background:#fff;border:1px solid #85B6E2;color:#333;" >关闭</a>
+                <ul>
+                    <li id="imgphoto" style="text-align: center;"><a href="#">项目1</a></li>
+                </ul>
+            </div>
+            <div class="foot"><div class="foot-right"></div></div>
+        </div>
+
+</body>
+</html>

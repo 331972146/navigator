@@ -1,0 +1,13 @@
+<!-- Modal -->
+<div class="modal-body">
+	<!-- <div class="row">
+		<div class="col-sm-8 col-xs-8 col-sm-offset-2 col-xs-offset-2">
+		    <label class="h3 center-block">{{msg}}</label>
+	    </div>
+	    <div class="col-sm-2 col-xs-2">
+		    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+	    </div>
+    </div> -->
+    <button type="button" class="close" ng-click="actions.cancel()" ng-if="notBlocked"><span class="glyphicon glyphicon-remove"></span></button>
+    <label class="h3 center-block" style="margin:1em 2em;padding:0" ng-bind-html="msg"></label>
+</div>

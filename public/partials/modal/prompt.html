@@ -1,0 +1,20 @@
+<!-- Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+    <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">{{title || '输入信息'}}</span></div>
+</div>
+<div class="modal-body">
+    <form method="post" class="w5c-form" w5c-form-validate="" role="form" novalidate name="form_prompt">
+        <div class="form-group has-success has-feedback">
+            <label for="password">{{msg || '密码'}}</label>
+            <input type="password" class="form-control" id="password" placeholder="{{msg || '密码'}}" ng-model="data.password" name="password" required="required" ng-minlength="1" ng-maxlength="16">
+            <button-clear-input input="data.password"></button-clear-input>
+        </div>
+    </form>
+    <button class="btn btn-primary" ng-click="actions.submit()">确认</button>
+    <button class="btn btn-warning" ng-click="actions.cancel()">取消</button>
+</div>
+<!-- <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="actions.submit()">确认</button>
+    <button class="btn btn-warning" ng-click="actions.cancel()">取消</button>
+</div> -->

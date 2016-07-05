@@ -1,0 +1,182 @@
+<!-- Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+    <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">{{title || '用户注册'}}</span></div>
+</div>
+<div class="modal-body">
+    <form method="post" class="w5c-form form-horizontal" w5c-form-validate="" w5c-submit="actions.register()" role="form" novalidate name="form_user_register">
+        <!-- <div class="row">
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="username" class="col-sm-2 control-label">账号</label><!-- for标签对应的是input的id属性值 -->
+                    <div class="col-sm-10">
+                        <input type="text" autofocus="" class="form-control" id="username" placeholder="账号" ng-model="register.username" name="username" required="required" ng-pattern="/^[0-9A-Za-z_]{1,19}$/"><!-- 这里使用 autofocus="" 属性会导致点击本 $modal 的取消按钮使 input 元素失去焦点, 从而触发 w5c-form-validate 的 blurTrig: true 设置, 导致需要再点击一次取消按钮才能关闭本 $modal, 还有一个解决方案是设置 blurTrig: false -->
+                        <button-clear-input input="register.username"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="password" class="col-sm-2 control-label">密码</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="password" placeholder="密码" ng-model="register.password" name="password" required="required" ng-minlength="1" ng-maxlength="16">
+                        <button-clear-input input="register.password"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="repeatPassword" class="col-sm-2 control-label">重复密码</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="repeatPassword" placeholder="重复密码" ng-model="register.repeatPassword" name="repeatPassword" required="required" ng-minlength="1" ng-maxlength="16">
+                        <button-clear-input input="register.repeatPassword"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="mobile" class="col-sm-2 control-label">手机号码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mobile" placeholder="手机号码" ng-model="register.mobile" name="mobile" required="required" ng-minlength="5" ng-maxlength="16" ng-pattern="/^[0-9+]{1}[0-9-]{4,15}$/">
+                        <button-clear-input input="register.mobile"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="email" class="col-sm-2 control-label">电子邮件</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="email" placeholder="电子邮件" ng-model="register.email" name="email" required="required">
+                        <button-clear-input input="register.email"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="name" class="col-sm-2 control-label">名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="name" placeholder="名称" ng-model="register.name" name="name" ng-pattern="/^[\u4e00-\u9fa5]{2,50}$/">
+                        <button-clear-input input="register.name"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label class="col-sm-2 control-label">性别</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="genderRadio" id="maleRadio" ng-model="register.gender" value="1">男
+                            <input type="radio" name="genderRadio" id="maleRadio" ng-model="register.gender" ng-value="1">男 这里的ng-value可以是$scope中的某个变量(如$scope.val), 所以ng-value="'String'"必须给字面值加引号, 数字和boolean可以不加
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="genderRadio" id="femaleRadio" ng-model="register.gender" value="2">女
+                        </label>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label for="birthdate" class="col-sm-2 control-label">出生日期</label>
+                    <div class="col-sm-10">
+                        <input type="date" class="form-control" id="birthdate" placeholder="出生日期" ng-model="register.birthdate" name="birthdate">
+                        <button-clear-input input="register.birthdate"></button-clear-input>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="idType" class="col-sm-2 control-label">证件类型</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="idType" placeholder="证件类型" ng-model="register.idType" ng-options="type for type in constant.idTypes" required="required">
+                        </select>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="idNo" class="col-sm-2 control-label">证件号码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="idNo" placeholder="证件号码" ng-model="register.idNo" name="idNo" ng-minlength="6" ng-maxlength="20" required="required" ng-pattern="/^[0-9a-zA-Z]{6,20}$/">
+                        <button-clear-input input="register.idNo"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label for="contactAddr" class="col-sm-2 control-label">联系地址</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="contactAddr" placeholder="联系地址" ng-model="register.contactAddr" name="contactAddr">
+                        <button-clear-input input="register.contactAddr"></button-clear-input>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label for="unit" class="col-sm-2 control-label">单位名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="unit" placeholder="单位名称" ng-model="register.unit" name="unit">
+                        <button-clear-input input="register.unit"></button-clear-input>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label for="tel" class="col-sm-2 control-label">联系电话</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="tel" placeholder="联系电话" ng-model="register.tel" name="tel" ng-minlength="8" ng-maxlength="16" ng-pattern="/^[0-9+]{1}[0-9-]{7,15}$/">
+                        <button-clear-input input="register.tel"></button-clear-input>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback">
+                    <label for="userRole" class="col-sm-2 control-label">用户角色</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="userRole" ng-model="register.userRole" ng-options="role.title for role in constant.userRoles" required="required">
+                        </select>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <!-- <div class="form-group has-feedback">
+                    <label for="userGrade" class="col-sm-2 control-label">会员级别</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="userGrade" ng-model="register.userGrade" ng-options="grade for grade in constant.userGrades" required="required">
+                        </select>
+                    </div>
+                </div> -->
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback" ng-if="register.userRole.value === 'medi'">
+                    <label for="seniorUnitCode" class="col-sm-2 control-label">上级单位</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="seniorUnitCode" placeholder="上级单位" ng-model="register.seniorUnitCode" name="seniorUnitCode" ng-pattern="/^[0-9a-zA-Z]{0,20}$/">
+                        <button-clear-input input="register.seniorUnitCode"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-xs-6"> -->
+                <div class="form-group has-feedback" ng-if="register.userRole.value === 'medi'">
+                    <label for="unitCode" class="col-sm-2 control-label">单位代码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="unitCode" placeholder="单位代码" ng-model="register.unitCode" name="unitCode" ng-pattern="/^[0-9a-zA-Z]{0,20}$/">
+                        <button-clear-input input="register.unitCode"></button-clear-input>
+                    </div>
+                </div>
+            <!-- </div>
+        </div> -->
+        <!-- <div class="row"> -->
+            <div class="col-sm-4 col-xs-4">
+                <button type="submit" class="btn btn-success form-control">确认</button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button class="btn btn-info form-control" type="reset">重置</button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button class="btn btn-warning form-control" type="button" ng-click="actions.cancel($event)">取消</button>
+            </div>
+        <!-- </div> -->
+        <label class="h4">{{error}}</label>
+        <!-- <label class="h4">{{register}}</label> -->
+    </form>
+</div>

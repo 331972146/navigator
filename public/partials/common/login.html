@@ -1,0 +1,55 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2 col-xs-4 col-sm-offset-1 col-xs-offset-1" style="height:6em;padding-top:2em;margin-bottom:1em">
+      <span style="font-size:3em;font-family:'微软雅黑';color:#555"></span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-7 col-xs-6" style="margin:0;padding:0">
+      <div class="row" style="margin:0;padding:0">
+        <div class="col-sm-11 col-sm-offset-2" style="margin-right:0;padding:0">
+          <img src="/res/img/main.jpg" style="width:100%;"><br />
+          <span style="font-size:0.8em;color:#888">* 为健康保险即时理赔结算服务，其使用范围为药品、医疗器械、养生保健用品等与健康相关的商品消费，治疗、体检、疗养等与健康相关的服务消费。</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3 col-xs-5 col-sm-offset-1 login-area">
+      <form method="post" class="w5c-form" w5c-form-validate="" w5c-submit="actions.login()" role="form" novalidate name="form_user_signup" style="background-color:#eee;padding:2em 2em 3em 2em" ng-if="!isLoggedIn">
+        <div class="form-group">
+          <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">服务中心</span><span style="color:#aaa;margin-left:2em">用户登录</span></div>
+          <div style="background:url(/res/img/dot.jpg) bottom repeat-x;height:2px"></div>
+        </div>
+        <div class="form-group has-success has-feedback">
+          <label for="username">账号</label>
+          <input type="text" autofocus="" class="form-control" id="username" placeholder="账号" ng-model="login.username" name="username" required="required" ng-pattern="/^[0-9A-Za-z_]{1,19}$/">
+          <button-clear-input input="login.username"></button-clear-input>
+        </div>
+        <div class="form-group has-success has-feedback">
+          <label for="password">密码</label>
+          <input type="password" class="form-control" id="password" placeholder="密码" ng-model="login.password" name="password" required="required" ng-minlength="1" ng-maxlength="16">
+          <button-clear-input input="login.password"></button-clear-input>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="login.rememberme">下次自动登录
+          </label>
+          <!-- <a href="" style="position:absolute;right:2em">忘记密码</a> -->
+        </div>
+        <button type="submit" class="btn btn-success form-control">登录</button>
+        <label class="h4">{{error}}</label>
+      </form>
+      <form style="background-color:#eee;padding:2em 2em 3em 2em" ng-if="isLoggedIn">
+        <div class="form-group">
+          <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">{{fullname}} {{gender}}, 您好!</span><span style="color:#aaa;margin-left:2em">欢迎回来!</span></div>
+          <div style="background:url(/res/img/dot.jpg) bottom repeat-x;height:2px"></div>
+        </div>
+        <a href="#/homepage" class="btn btn-primary form-control" style="margin:1em 0">进入网站首页</a>
+        <a href="#/userhome" class="btn btn-success form-control" style="margin:1em 0">进入用户中心</a>
+        <!-- <a href="#/demohome" class="btn btn-success form-control" style="margin:1em 0">进入功能演示</a> -->
+        <button type="button" class="btn btn-warning form-control" ng-click="actions.logout()" style="margin:1em 0">退出登录</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

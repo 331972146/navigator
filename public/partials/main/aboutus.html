@@ -1,0 +1,27 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0">
+      <div class="page-header">
+        <h1><a class="cutsom-left" href="#/login"> </a><!-- <small>杭州 城市切换</small> --></h1>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <hr class="no-margin-top" />
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <!-- <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled" select="tab.select && tab.select()" deselect="tab.deselect && tab.deselect()"> -->
+        <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled" select="tab.select && tab.select({message: 'entering'})" deselect="tab.deselect && tab.deselect({message: 'leaving'})">
+          <uib-tab-heading class="custom-tab-heading">
+            <!-- <i class="glyphicon glyphicon-bell"></i> -->{{tab.title}}
+          </uib-tab-heading>
+          <!-- <article class="word-break" ng-bind-html="tab.content"></article> -->
+          <!-- <div class="word-break" ng-bind-html="tab.content"></div> -->
+          <div class="word-break" dynamic-html="tab.content"></div>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

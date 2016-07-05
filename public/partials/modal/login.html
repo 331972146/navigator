@@ -1,0 +1,43 @@
+<!-- Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+    <!-- <h3 class="modal-title">请登录</h3> -->
+    <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">服务中心</span><span style="color:#aaa;margin-left:2em">请登录</span></div>
+    <!-- <span class="h3">服务中心</span><small>请登录</small> -->
+</div>
+<div class="modal-body">
+    <form method="post" class="w5c-form" w5c-form-validate="" w5c-submit="actions.login()" role="form" novalidate name="form_user_login">
+        <div class="form-group has-success has-feedback">
+            <label for="username">账号</label>
+            <input type="text" autofocus="" class="form-control" id="username" placeholder="账号" ng-model="login.username" name="username" required="required" ng-pattern="/^[0-9A-Za-z_]{1,19}$/"><!-- 这里使用 autofocus="" 属性会导致点击本 $modal 的取消按钮使 input 元素失去焦点, 从而触发 w5c-form-validate 的 blurTrig: true 设置, 导致需要再点击一次取消按钮才能关闭本 $modal, 还有一个解决方案是设置 blurTrig: false -->
+            <button-clear-input input="login.username"></button-clear-input>
+        </div>
+        <div class="form-group has-success has-feedback">
+            <label for="password">密码</label>
+            <input type="password" class="form-control" id="password" placeholder="密码" ng-model="login.password" name="password" required="required" ng-minlength="1" ng-maxlength="16">
+            <button-clear-input input="login.password"></button-clear-input>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="login.rememberme">下次自动登录
+            </label>
+            <a href="" style="position:absolute;right:2em">忘记密码</a>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 col-xs-4">
+                <button type="submit" class="btn btn-success form-control">登录</button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button class="btn btn-info form-control" type="reset">重置</button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button class="btn btn-warning form-control" type="button" ng-click="actions.cancel($event)">取消</button>
+            </div>
+        </div>
+        <label class="h4">{{error}}</label>
+    </form>
+</div>
+<!-- <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="actions.login()">登录</button>
+    <button class="btn btn-warning" ng-click="actions.cancel()">取消</button>
+</div> -->

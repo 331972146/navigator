@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>修改密码</title>
+<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<link type="text/css" rel="stylesheet" href="styles/core.css"/>
+<script src="scripts/popup_layer.js" type="text/javascript" language="javascript"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	new PopupLayer({trigger:"#ele-mobile",popupBlk:"#blk-mobile",closeBtn:"#close-mobile"});
+	new PopupLayer({trigger:"#ele-email",popupBlk:"#blk-email",closeBtn:"#close-email"});
+	new PopupLayer({trigger:"#ele-address",popupBlk:"#blk-address",closeBtn:"#close-address"});
+	new PopupLayer({trigger:"#ele-phone800",popupBlk:"#blk-phone800",closeBtn:"#close-phone800"});
+	new PopupLayer({trigger:"#ele-linkman",popupBlk:"#blk-linkman",closeBtn:"#close-linkman"});
+	new PopupLayer({trigger:"#ele-linktel",popupBlk:"#blk-linktel",closeBtn:"#close-linktel"});
+	new PopupLayer({trigger:"#ele-linkmail",popupBlk:"#blk-linkmail",closeBtn:"#close-linkmail"});
+
+	var accinfo = "";
+	//获取登录信息
+	$.get(baseurl + "/user/getInfo?token=" + sessionStorage.token ,function(result){
+		accinfo = result.results;
+
+		if(accinfo.username == accinfo.personalInfo.idNo)
+			new PopupLayer({trigger:"#ele-username",popupBlk:"#blk-username",closeBtn:"#close-username"});
+
+		if(accinfo.username) $("#ele-username").html(accinfo.username);
+
+		if(accinfo.mobile) {
+			var mobStr = accinfo.mobile.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+			$("#ele-mobile").html(mobStr);
+			$("#old-mobile").html(mobStr);
+		}
+
+
+		if(accinfo.email) $("#ele-email").html(accinfo.email);
+		if(accinfo.personalInfo.location && accinfo.personalInfo.location.city && accinfo.personalInfo.location.city.name) $("#ele-address").html(accinfo.personalInfo.location.city.name);
+
+		var usertype = accinfo.extInfo.yiyangbaoHealInce.userType;
+		switch(usertype){
+			case "user":
+				$("#lipayinfo").show();
+				break;
+			case "unit":
+			case "medi":
+			case "ince":
+				$("#liorginfo").show();
+				if(accinfo.extInfo.yiyangbaoHealInce.phone800){
+					$("#phone800").val(accinfo.extInfo.yiyangbaoHealInce.phone800);
+					$("#ele-phone800").html(accinfo.extInfo.yiyangbaoHealInce.phone800);
+				}
+				if(accinfo.personalInfo.contactor){
+					if(accinfo.personalInfo.contactor.name){
+						$("#linkman").val(accinfo.personalInfo.contactor.name);
+						$("#ele-linkman").html(accinfo.personalInfo.contactor.name);
+					}
+					if(accinfo.personalInfo.contactor.phone){
+						$("#linktel").val(accinfo.personalInfo.contactor.phone);
+						$("#ele-linktel").html(accinfo.personalInfo.contactor.phone);
+					}
+					if(accinfo.personalInfo.contactor.email){
+						$("#linkmail").val(accinfo.personalInfo.contactor.email);
+						$("#ele-linkmail").html(accinfo.personalInfo.contactor.email);
+					}
+				}
+				break;
+		}
+	});
+	//修改用户信息
+	$("#saveusername").click(function(event){
+		// if (accinfo.username !== accinfo.personalInfo.idNo) return;
+		var objStr = {token: sessionStorage.token, user: {username: $("#username").val()}};
+		$.post(baseurl + "/user/updateOne", objStr, function(result,text){
+			succinfo2("username", "用户名修改成功",text);
+			$("#ele-username").html(result.responseText.username);
+		})
+		.error(function(result,text){ 
+			succinfo2("username", result.responseText, text); 
+		});
+	});
+
+	//修改手机号
+	$("#btngetmessage").click(function(event){
+		if (!accinfo.mobile && !$("#newMobile").val()) return alert('请输入新手机号码!');
+		var action = "-chgBind";
+		if (!accinfo.mobile) action = "-initBind";
+		$.post(baseurl + "/interface/smsSend", {token: sessionStorage.token, mobile: accinfo.mobile || $("#newMobile").val(), smsType: action}, function (result, text) {
+			$("#mobile").val()
+			succinfo2("mobile", "信息已经发送", '成功');
+			//$("#ele-email").html(email);
+		})
+		.error(function(result,text){ 
+			succinfo2("mobile", result.responseText, text);
+		});
+	});
+	//-------------------------
+	$("#savemobile").click(function(event){
+		var action = "-chgBind";
+		if (!accinfo.mobile) {
+			action = "-initBind";
+			var objStr = {token: sessionStorage.token, user: {mobile: $("#newMobile").val()}};
+		}
+		else {
+			var objStr = {token: sessionStorage.token, user: {mobile: accinfo.mobile, newMobile: $("#newMobile").val()}};
+		}
+		$.ajax({
+			url: baseurl + "/user/updateOne", 
+			headers: {smstype: action, smsmobile: accinfo.mobile || $("#newMobile").val(), smsauth: $("#verifyStr").val()}, 
+			method: 'POST', 
+			dataType: 'json', 
+			data: objStr, 
+			success: function (result, text) {
+				console.log(text);
+				succinfo2("mobile", "新手机保存成功", text);
+				//$("#ele-email").html(email);
+				$("#ele-mobile").html(result.results.mobile);
+				$("#old-mobile").html(result.results.mobile);
+			}, 
+			error: function (result,text) { 
+				succinfo2("mobile", result.responseText, text);
+			}
+		});
+	});
+
+	//修改邮箱
+	$("#saveemail").click(function(event){
+		var email = $("#email").val();
+		var jsonStr = {token:sessionStorage.token,user:{email:email}};
+		$.post(baseurl + "/user/updateOne", jsonStr, function(result,text){
+			console.log(text);
+			succinfo2("email", "信息修改成功！",text);
+			//$("#ele-email").html(email);
+			// $("#ele-email").html(result.responseText.email);
+		})
+		.error(function(result,text){ 
+			succinfo2("email", result.responseText, text); 
+		});
+	});
+
+	//修改地址
+	$("#saveaddress").click(function(event){
+		var address = $("#address").val();
+		var jsonStr = {token:sessionStorage.token,user: {$set:{'personalInfo.location.city.name': address}}};
+		$.post(baseurl + "/user/updateOne",jsonStr, function(result,text){
+			succinfo2("address", "信息修改成功！",text);
+		})
+		.error(function(result,text){ 
+			succinfo2("address", result.responseText, text); 
+		});
+	});
+
+	//修改密保
+	$("#savewenti").click(function(event){
+		$.post(baseurl + '/user/verifyPwd', {token:sessionStorage.token,password: $("#verifyPasswd").val()}, function(data, textStatus) {
+			if(textStatus =="success"){
+				var jsonStr = {
+					token:sessionStorage.token,	
+					user: {
+						'accountInfo.pwdQuestions': [
+								{q: $("#wenti1").val(), a: $("#daan1").val()}, 
+								{q: $("#wenti2").val(), a: $("#daan2").val()}, 
+								{q: $("#wenti3").val(), a: $("#daan3").val()},
+							]
+						}
+				};
+				$.post(baseurl + "/user/updateOne",jsonStr, function(result,textStatus){
+					succinfo("信息修改成功！",textStatus);
+				})
+				.error(function(result,text){ 
+					succinfo(result.responseText, textStatus); 
+				});
+			}
+		}).error(function(result,textStatus){ 
+			succinfo(result.responseText,textStatus);
+		});
+	});
+
+	//修改phon800
+	$("#savephone800").click(function(event){
+		var phone800 = $("#phone800").val();
+		var jsonStr = {token:sessionStorage.token,user: {$set:{'extInfo.yiyangbaoHealInce.phone800': phone800}}};
+		$.post(baseurl + "/user/updateOne",jsonStr, function(result,text){
+			succinfo2("phone800", "信息修改成功！",text);
+		})
+		.error(function(result,text){ 
+			succinfo2("phone800", result.responseText, text); 
+		});
+	});
+
+	//修改联系人
+	$("#savelinkman").click(function(event){
+		var linkman = $("#linkman").val();
+		var jsonStr = {token:sessionStorage.token,user: {$set:{'personalInfo.contactor.name': linkman}}};
+		$.post(baseurl + "/user/updateOne",jsonStr, function(result,text){
+			succinfo2("linkman", "信息修改成功！",text);
+		})
+		.error(function(result,text){ 
+			succinfo2("linkman", result.responseText, text); 
+		});
+	});
+	//修改联系电话
+	$("#savelinktel").click(function(event){
+		var linktel = $("#linktel").val();
+		var jsonStr = {token:sessionStorage.token,user: {$set:{'personalInfo.contactor.phone': linktel}}};
+		$.post(baseurl + "/user/updateOne",jsonStr, function(result,text){
+			succinfo2("linktel", "信息修改成功！",text);
+		})
+		.error(function(result,text){ 
+			succinfo2("linktel", result.responseText, text); 
+		});
+	});
+	//修改联系邮箱
+	$("#savelinkmail").click(function(event){
+		var linkmail = $("#linkmail").val();
+		var jsonStr = {token:sessionStorage.token,user: {$set:{'personalInfo.contactor.email': linkmail}}};
+		$.post(baseurl + "/user/updateOne",jsonStr, function(result,text){
+			succinfo2("linkmail", "信息修改成功！",text);
+		})
+		.error(function(result,text){ 
+			succinfo2("linkmail", result.responseText, text); 
+		});
+	});
+
+	//修改密码
+	$("#save-pwd").click(function(){
+		modifypwd("pwd");
+	});
+
+	//修改支付密码
+	$("#save-dpwd").click(function(event){
+		modifypwd("dpwd");
+	});
+
+	function modifypwd(typename){
+		var keyStr = (typename == "pwd") ? "password" : "extInfo.yiyangbaoHealInce.dealPassword"
+		var jsonStr = {
+			token:sessionStorage.token,
+			user:accinfo,
+			oldPassword:$("#" + typename + "-oldPassword").val(), 
+			newPassword:$("#" + typename + "-newPassword").val(), 
+			repeatPwd: $("#" + typename + "-repeatPwd").val(),
+			targetKey: keyStr
+		};
+
+		$.ajax({
+			//提交数据的类型 POST GET
+			type:"POST",
+			//提交的网址
+			url:baseurl + "/user/updateOnesPwd",
+			//提交的数据
+			data:jsonStr,
+			//data:{Name:"sanmao",Password:"sanmaoword"},
+			//返回数据的格式
+			datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+			//在请求之前调用的函数
+			beforeSend:function(){
+				//$("#msg").html("logining");
+			},
+			//成功返回之后调用的函数             
+			success:function(data){ 
+				//success results
+			},
+			//调用执行后调用的函数
+			complete: function(XMLHttpRequest, textStatus){
+				//alert(textStatus);
+				if(textStatus == "success"){
+					succinfo("信息修改成功！",textStatus);
+				}else{
+					succinfo(XMLHttpRequest.responseText,textStatus);
+				}
+			},
+			//调用出错执行的函数
+			error: function(){
+				//请求出错处理
+			}         
+		});
+	}
+
+});
+
+function succinfo(msg,status){
+	$("#msgtip").show().delay(3000).hide(0);
+	$("#msgtip").html("<strong>" + status + "! </strong> " + msg);
+}
+
+function succinfo2(name,msg,status){
+	$("#msg-" + name).show().delay(2000).hide(0);
+	$("#msg-" + name).html("<strong>" + status + "! </strong> " + msg);
+	if(status == "success"){
+		setTimeout(function(){
+			$("#close-" + name).click();
+			$("#ele-" + name).html($("#"+name).val());
+			// window.location.reload();
+		}, 2000);
+	}
+}
+</script>
+</head>
+<body>
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li id="baseinfo" class="active"><a href="#tab-baseinfo" data-toggle="tab">基本信息</a></li>
+    <li id="liwenti"><a href="#tab-wenti" data-toggle="tab">密保修改</a></li>
+    <li id="liaccount"><a href="#tab-account" data-toggle="tab">密码修改</a></li>
+    <li id="lipayinfo" style="display: none;"><a href="#tab-payinfo" data-toggle="tab">支付信息</a></li>
+    <li id="liorginfo" style="display: none;"><a href="#tab-orginfo" data-toggle="tab">企业信息</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab-baseinfo">
+		<div class=".container" style="margin-top:20px;width:80%;">
+			<form class="form-horizontal" role="form">
+			  <div class="form-group">
+				<label for="username" class="col-sm-2 control-label">登录帐号</label>
+				<div class="col-sm-10">
+				  <span id="ele-username" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+
+			        <div id="blk-username" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="username" placeholder="输入用户名">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="saveusername">保存</button>&nbsp;
+				                    <button type="button" id="close-username" class="btn btn-inverse">关闭</button>
+			                    </li>
+			                    <li><span id="msg-username">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+
+			  <div class="form-group">
+				<label for="mobile" class="col-sm-2 control-label">手机号码</label>
+				<div class="col-sm-10">
+				  <span id="ele-mobile" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+
+			        <div id="blk-mobile" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+			                    	<span class="form-control" style="width:150px; margin:0; display: block;text-align:left;" id="old-mobile"></span>
+			                    	<button type="button" class="btn btn-inverse" id="btngetmessage" >获取验证码</button>
+			                    </li>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="verifyStr" placeholder="输入验证码">
+			                    </li>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="newMobile" placeholder="输入新手机号">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="savemobile">保存新手机</button>&nbsp;
+				                    <button type="button" id="close-mobile" class="btn btn-inverse">取消关闭</button>
+			                    </li>
+			                    <li><span id="msg-mobile">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+
+			  <div class="form-group">
+				<label for="emall" class="col-sm-2 control-label">电子邮箱</label>
+				<div class="col-sm-10">
+				  <span id="ele-email" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+			        <div id="blk-email" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="email" placeholder="输入新邮箱地址">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="saveemail">保存</button>&nbsp;
+				                    <button type="button" id="close-email" class="btn btn-inverse">关闭</button>
+			                    </li>
+			                    <li><span id="msg-email">信息修改成功<span></li>
+
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+
+			  <div class="form-group">
+				<label for="address" class="col-sm-2 control-label">修改地址</label>
+				<div class="col-sm-10">
+				  <span id="ele-address" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+			        <div id="blk-address" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="address" placeholder="输入新常驻地址">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="saveaddress">保存</button>&nbsp;
+				                    <button type="button" id="close-address" class="btn btn-inverse">关闭</button>
+			                    </li>
+			                    <li><span id="msg-address">信息修改成功<span></li>
+
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+			</form>
+		</div>	
+	
+	</div>
+
+    <div class="tab-pane" id="tab-wenti">
+		<div class=".container" style="margin-top:20px;width:80%;">
+			<form class="form-horizontal" role="form">
+			  <div class="form-group">
+				<label for="oldpass" class="col-sm-2 control-label">登录密码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="verifyPasswd" placeholder="请输入登录密码进行验证"><span id="verifyPasswdTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="wenti1" class="col-sm-2 control-label">问题一</label>
+				<div class="col-sm-10">
+				  <select  class="form-control" style="width:250px;" id="wenti1">
+				  	<option value="父亲名字">父亲名字</option>
+				  	<option value="母亲名字">母亲名字</option>
+				  	<option value="配偶名字">配偶名字</option>
+				  	<option value="小孩名字">小孩名字</option>
+				  	<option value="父亲生日">父亲生日</option>
+				  	<option value="母亲生日">母亲生日</option>
+				  	<option value="配偶生日">配偶生日</option>
+				  	<option value="小孩生日">小孩生日</option>
+				  </select>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="daan1" class="col-sm-2 control-label">答案一</label>
+				<div class="col-sm-10">
+				  <input type="text" class="form-control" style="width:250px;" id="daan1" placeholder="输入问题一答案"><span id="daan1Tip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="wenti2" class="col-sm-2 control-label">问题二</label>
+				<div class="col-sm-10">
+				  <select  class="form-control" style="width:250px;" id="wenti2">
+				  	<option value="最喜欢的颜色">最喜欢的颜色</option>
+				  	<option value="小学名称">小学名称</option>
+				  	<option value="初中名称">初中名称</option>
+				  	<option value="高中名称">高中名称</option>
+				  	<option value="大学的专业">大学的专业</option>
+				  	<option value="最喜欢的演员">最喜欢的演员</option>
+				  </select>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="daan2" class="col-sm-2 control-label">答案二</label>
+				<div class="col-sm-10">
+				  <input type="text" class="form-control" style="width:250px;" id="daan2" placeholder="输入问题二答案"><span id="daan2Tip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="wenti3" class="col-sm-2 control-label">问题三</label>
+				<div class="col-sm-10">
+				  <select  class="form-control" style="width:250px;" id="wenti3">
+				  	<option value="最喜欢的歌曲">最喜欢的歌曲</option>
+				  	<option value="第一只宠物的名字">第一只宠物的名字</option>
+				  	<option value="最喜欢的水果">最喜欢的水果</option>
+				  	<option value="最喜欢的食物">最喜欢的食物</option>
+				  	<option value="最喜欢的宠物">最喜欢的宠物</option>
+				  </select>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="daan3" class="col-sm-2 control-label">答案三</label>
+				<div class="col-sm-10">
+				  <input type="text" class="form-control" style="width:250px;" id="daan3" placeholder="输入问题三答案"><span id="daan3Tip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label">  </label>
+				 <button type="button" class="btn btn-success" id="savewenti" style="text-align:center;">确认修改</button>
+				 <button type="reset" class="btn btn-inverse">重置</button>
+			  </div>
+			</form>
+		</div>
+    </div>
+
+    <div class="tab-pane" id="tab-account">
+		<div class=".container" style="margin-top:20px;width:80%;">
+			<form class="form-horizontal" role="form">
+			  <div class="form-group">
+				<label for="oldpass" class="col-sm-2 control-label">登录密码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="pwd-oldPassword" name="pwd-oldPassword" placeholder="输入旧密码"><span id="pwd-oldpassTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="newpass" class="col-sm-2 control-label">新 密 码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="pwd-newPassword" name="pwd-newPassword" placeholder="输入新密码"><span id="pwd-newpassTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="newpassAgain" class="col-sm-2 control-label">新 密 码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="pwd-repeatPwd"  name="pwd-repeatPwd" placeholder="确认新密码"><span id="pwd-newpassAgainTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label">  </label>
+				 <button type="button" class="btn btn-success" id="save-pwd" style="text-align:center;">确认修改</button>
+				 <button type="reset" class="btn btn-inverse">重置</button>
+			  </div>
+			</form>
+		</div>
+    </div>
+ 
+    <div class="tab-pane" id="tab-payinfo">
+		<div class=".container" style="margin-top:20px;width:80%;">
+			<form class="form-horizontal" role="form">
+			  <div class="form-group">
+				<label for="oldpass" class="col-sm-2 control-label">支付密码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="dpwd-oldPassword" name="dpwd-oldPassword" placeholder="输入旧密码"><span id="dpwd-oldPasswordTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="newpass" class="col-sm-2 control-label">新 密 码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="dpwd-newPassword" name="dpwd-newPassword" placeholder="输入新密码"><span id="dpwd-newPasswordTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="newpassAgain" class="col-sm-2 control-label">新 密 码</label>
+				<div class="col-sm-10">
+				  <input type="password" class="form-control" style="width:250px;" id="dpwd-repeatPwd" name="dpwd-repeatPwd" placeholder="确认新密码"><span id="dpwd-repeatPwdTip" style="display:none;color:red;"></span>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label">  </label>
+				 <button type="button" class="btn btn-success" id="save-dpwd" style="text-align:center;">确认修改</button>
+				 <button type="reset" class="btn btn-inverse">重置</button>
+			  </div>
+			</form>
+		</div>
+    </div>
+
+    <div class="tab-pane" id="tab-orginfo">
+		<div class=".container" style="margin-top:20px;width:80%;">
+			<form class="form-horizontal" role="form">
+			  <div class="form-group">
+				<label for="phone800" class="col-sm-2 control-label">服务热线</label>
+				<div class="col-sm-10">
+				  <span id="ele-phone800" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+
+			        <div id="blk-phone800" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="phone800" placeholder="输入服务热线 400/800/955等">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="savephone800">保存</button>&nbsp;
+				                    <button type="button" id="close-phone800" class="btn btn-inverse">关闭</button>
+			                    </li>
+			                    <li><span id="msg-phone800">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+
+			  <div class="form-group">
+				<label for="linkman" class="col-sm-2 control-label">联&nbsp;&nbsp;系&nbsp;&nbsp;人</label>
+				<div class="col-sm-10">
+				  <span id="ele-linkman" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+			        <div id="blk-linkman" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="linkman" placeholder="输入联系人">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="savelinkman">保存联系人</button>&nbsp;
+				                    <button type="button" id="close-linkman" class="btn btn-inverse">取消关闭</button>
+			                    </li>
+			                    <li><span id="msg-linkman">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+			  <div class="form-group">
+				<label for="linktel" class="col-sm-2 control-label">联系电话</label>
+				<div class="col-sm-10">
+				  <span id="ele-linktel" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+			        <div id="blk-linktel" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="linktel" placeholder="输入联系电话">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="savelinktel">保存电话</button>&nbsp;
+				                    <button type="button" id="close-linktel" class="btn btn-inverse">取消关闭</button>
+			                    </li>
+			                    <li><span id="msg-linktel">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+			  <div class="form-group">
+				<label for="linkmail" class="col-sm-2 control-label">联系邮箱</label>
+				<div class="col-sm-10">
+				  <span id="ele-linkmail" class="form-control" style="width:250px;"></span>
+				</div>
+			  </div>
+			        <div id="blk-linkmail" class="blk" style="width: 300px; display:none;">
+			            <div class="head"><div class="head-right"></div></div>
+			            <div class="main">
+			                <ul>
+			                    <li>
+				                    <input type="text" class="form-control" style="width:250px;" id="linkmail" placeholder="输入联系邮箱">
+			                    </li>
+			                    <li>
+				                    <button type="button" class="btn btn-success" id="savelinkmail">保存邮箱</button>&nbsp;
+				                    <button type="button" id="close-linkmail" class="btn btn-inverse">取消关闭</button>
+			                    </li>
+			                    <li><span id="msg-linkmail">信息修改成功<span></li>
+			                </ul>
+			            </div>
+			            <div class="foot"><div class="foot-right"></div></div>
+			        </div>
+			</form>
+		</div>	
+	
+	</div>
+  </div>
+</div>
+
+
+
+<div id="msgtip" class="alert alert-success alert-dismissable" style="width:50%;margin-left:10%;display: none;">
+  <strong>Success!</strong>你已成功修改密码！
+</div>
+</body>
+</html>

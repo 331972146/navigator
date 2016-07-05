@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <base href="/">
+    <link rel="icon" href="res/ico/favicon_16.ico">
+    <title></title>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="javascript/angular-bootstrap/bootstrap-theme.min.css"> -->
+    <!-- <link rel="styleSheet" href="lib/angular-ui-select/dist/select.min.css"/> -->
+    <link rel="styleSheet" href="lib/angular-ui-grid/ui-grid.min.css"/>
+    <!-- <link rel="styleSheet" href="lib/angular-ui-grid/ui-grid-unstable.css"/> -->
+    <!-- <link rel="styleSheet" href="test/lib/ui-grid-unstable.css"/> -->
+    <!-- your app's stylesheet -->
+    <!-- build:css -->
+      <!-- <link href="stylesheets/style.min.css" rel="stylesheet"> -->
+      <link href="stylesheets/style.css" rel="stylesheet">
+    <!-- endbuild -->
+  </head>
+
+  <!-- 
+    'starter' is the name of this angular module (js/app.js)
+  -->
+  <body ng-app="yiyangbao" ng-controller="main">
+
+    <!-- 
+      The views will be rendered in the <ion-nav-view> directive below
+      Templates are in the /templates folder (but you could also
+      have templates inline in this html file if you'd like).
+    -->
+    <!-- <ion-nav-view></ion-nav-view> -->
+    
+    <!-- 单纯的angular-ui-router, 用于bootstrap -->
+    <ui-view></ui-view>
+    
+  </body>
+  <!-- 所有.js在页面最后加载, .css在页面head标签加载, 提高页面显示内容加载速度的同时, 不会发生没有.css的html内容一闪而过的情况 -->
+  <!-- 所有库之前的独立初始化模块: 可以将服务(.factory) ACL 作为 ACLProvider 注入(injector)到配置(.config)中, 然后通过 ACL.something 方式调用, 因此就不需要这个独立模块了. 还是存在问题!!! 通过直接在.config中$provide.service解决!!! -->
+      <!-- <script src="javascript/helpers/ACL.js"></script> -->
+  <!-- 加载UEditor编辑器 -->
+      <!-- build:ueConf -->
+        <script src="ueditor/ueditor.config.js"></script>
+      <!-- endbuild -->
+      <script src="ueditor/ueditor.all.min.js"></script>
+  <!-- 加载angular-ui/bootstrap -->
+      <!-- <script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script> -->
+      <script src="lib/angular/angular.min.js"></script>
+      <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+      <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <!-- 加载ionic/angularjs scripts -->
+      <!-- <script src="lib/ionic/js/ionic.bundle.min.js"></script> -->
+  <!-- 分离出来的angularJs模块 -->
+      <script src="lib/angular-resource/angular-resource.min.js"></script>
+      <script src="lib/angular-animate/angular-animate.min.js"></script>
+      <script src="lib/angular-touch/angular-touch.min.js"></script>
+      <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+  <!-- 第三方js -->
+      <script src="lib/angular-w5c-validator/w5cValidator.min.js"></script>
+      <script src="lib/angular-jwt/dist/angular-jwt.min.js"></script>
+      <script src="lib/angular-ueditor/dist/angular-ueditor.min.js"></script>
+      <script src="lib/ng-file-upload/ng-file-upload-shim.min.js"></script>
+      <script src="lib/ng-file-upload/ng-file-upload.min.js"></script>
+      <script src="lib/js-xlsx/shim.js"></script>
+      <script src="lib/js-xlsx/dist/xlsx.core.min.js"></script>
+      <!-- <script src="lib/papaparse/papaparse.min.js"></script>
+      <script src="lib/csv-js/csv.js"></script>
+      <script src="lib/pdfmake/build/pdfmake.min.js"></script>
+      <script src="lib/pdfmake/build/vfs_fonts.js"></script> -->
+      <!-- build:qrcode -->
+          <!-- <script src="lib/qrcode-generator/js/qrcode.min.js"></script> -->
+          <script src="lib/qrcode-generator/js/qrcode.js"></script>
+      <!-- endbuild -->
+      <!-- build:qrcode_utf8 -->
+          <!-- <script src="lib/qrcode-generator/js/qrcode_UTF8.min.js"></script> -->
+          <script src="lib/qrcode-generator/js/qrcode_UTF8.js"></script>
+      <!-- endbuild -->
+      <!-- build:ng_qrcode -->
+          <!-- <script src="lib/angular-qrcode/angular-qrcode.min.js"></script> -->
+          <script src="lib/angular-qrcode/angular-qrcode.js"></script>
+      <!-- endbuild -->
+      <!-- <script src="lib/angular-ui-select/dist/select.min.js"></script> -->
+
+      <script src="lib/angular-md5/angular-md5.min.js"></script>
+      <script src="lib/angular-ui-grid/ui-grid.min.js"></script>
+      <!-- <script src="lib/angular-ui-grid/ui-grid-unstable.js"></script> -->
+      <!-- <script src="testlib/ui-grid-unstable.js"></script> -->
+      <!-- build:socket_io -->
+          <!-- <script src="/socket.io/socket.io.js"></script> --><!-- 客户端的js文件由服务器自动导出, 地址为'/socket.io/socket.io.js'(即http://domain/socket.io/socket.io.js), 不需要在客户端手动安装. A standalone build of socket.io-client is exposed automatically by the socket.io server as /socket.io/socket.io.js; !!!!!! '/socket.io/socket.io.js'是web访问时服务器提供的.js文件地址, 但在App编译时, 需要指定一个本地相对路径, 否则由服务器导出的话在App的文件夹里是没有这个.js文件的; !!!!!! -->
+          <script src="lib/socket.io.js"></script><!-- !!!!!! '/socket.io/socket.io.js'是web访问时服务器提供的.js文件地址, 但在App编译时, 需要指定一个本地相对路径, 否则由服务器导出的话在App的文件夹里是没有这个.js文件的; !!!!!! -->
+      <!-- endbuild -->
+      <script src="lib/angular-socket-io/socket.min.js"></script>
+  <!-- Bootstrap linter 网页校验工具, 针对Bootstrap -->
+      <!-- <script src="lib/bootlint/dist/browser/bootlint.js"></script> -->
+      <!-- <script src="ueditor/lang/zh-cn/zh-cn.js"></script> -->
+      <!-- <script>
+          window.onload = function () {
+            var ue = UE.getEditor('container', { // UE 初始化时, 会自动发送 /UEditor/upload?action=config&&noCache= 请求, 服务器端必须返回 config.json 中的 json 对象, UE 收到 json 对象后就认为服务器端工作正常, 可以上传资源文件, 否则上传图片, 视频, 文件等按钮会变成 disabled
+                serverUrl: 'UEditor/upload'
+            });
+
+            // // Bootstrap linter 网页校验工具, 针对Bootstrap
+            // bootlint.showLintReportForCurrentDocument([]);
+          };
+      </script> -->
+  <!-- cordova script (this will be a 404 during development) -->
+      <!-- <script src="lib/ngCordova/ng-cordova.min.js"></script>
+      <script src="cordova.js"></script> -->
+  <!-- your app's script -->
+  <!-- build:js -->
+      <!-- <script src="javascript/app.min.js"></script> -->
+      <script src="javascript/app.js"></script>
+      <script src="javascript/services.js"></script>
+      <script src="javascript/controllers.js"></script>
+      <script src="javascript/directives.js"></script>
+      <script src="javascript/filters.js"></script>
+      <!-- <script src="lib/ng-image-compress/ng-image-compress.js"></script> --><!-- bower安装的版本, directive名不是image, 而是ng-image-compress, 需要在示例的input标签里加ng-image-compress属性, 真是个坑 -->
+      <!-- <script src="javascript/controllers.demo.js"></script>
+      <script src="javascript/controllers.demo.uiGrid.js"></script> -->
+      <script src="javascript/controllers.backend.js"></script>
+      <script src="javascript/controllers.modal.js"></script>
+  <!-- endbuild -->
+  <!-- Bootstrap linter 网页校验工具, 针对Bootstrap -->
+    <!-- <script>
+        (function () {
+          var s = document.createElement("script");
+          s.onload = function () {
+              bootlint.showLintReportForCurrentDocument([]);
+          };
+          s.src = "lib/bootlint/bootlint.min.js";
+          document.body.appendChild(s);
+        })();
+    </script> -->
+</html>

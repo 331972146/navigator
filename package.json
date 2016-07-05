@@ -1,0 +1,80 @@
+{
+  "name": "nodeServer",
+  "version": "0.1.1",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "start": "pm2 start app.js -i 0",
+    "win": "set DEBUG=nodeServer & set PORT=80 & nodemon --ignore mongodb/ --ignore node_modules/ --ignore */public*/ app.js",
+    "winMongo": "mongod --dbpath mongodb",
+    "winRedis": ".\\redis\\redis-server.exe .\\redis\\redis.windows.conf"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "alexgzhou",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "bcrypt": "0.8.5",
+    "bluebird": "3.0.6",
+    "body-parser": "1.14.1",
+    "bson": "0.4.20",
+    "busboy": "0.2.12",
+    "ccap": "0.6.4",
+    "dateformat": "1.0.12",
+    "deep-equal": "1.0.1",
+    "express": "4.13.3",
+    "express-useragent": "0.2.4",
+    "express-validator": "2.18.0",
+    "fs-extra": "0.26.2",
+    "helmet": "0.15.0",
+    "hiredis": "0.4.1",
+    "jsonwebtoken": "5.4.1",
+    "mongodb": "2.0.49",
+    "mongoose": "4.2.9",
+    "morgan": "1.6.1",
+    "mssql": "2.3.2",
+    "multer": "0.1.8",
+    "node-schedule": "0.6.0",
+    "node-snowflake": "0.0.1",
+    "node-uuid": "1.4.7",
+    "nodemailer": "1.10.0",
+    "oauth2-server": "2.4.1",
+    "pinyin": "^2.6.2",
+    "quickthumb": "0.0.12",
+    "randomstring": "^1.1.5",
+    "redis": "2.4.2",
+    "request": "2.67.0",
+    "rescode": "0.1.10",
+    "serve-favicon": "2.3.0",
+    "socket.io": "1.3.7",
+    "xlsx": "0.8.0"
+  },
+  "devDependencies": {
+    "bower": "1.6.9",
+    "cookie-parser": "1.4.0",
+    "debug": "2.2.0",
+    "glob": "6.0.1",
+    "gulp": "3.9.1",
+    "gulp-concat": "2.6.0",
+    "gulp-html-replace": "1.5.5",
+    "gulp-htmlclean": "2.7.6",
+    "jshint": "2.9.1",
+    "gulp-jshint": "2.0.0",
+    "gulp-minify-css": "1.2.2",
+    "gulp-rename": "1.2.2",
+    "gulp-sass": "2.1.0",
+    "gulp-uglify": "1.5.1",
+    "gulp-util": "3.0.7",
+    "ueditor": "1.1.1",
+    "yamlparser": "0.0.2"
+  }
+}

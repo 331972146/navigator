@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<title>个人批次理赔申请书</title>
+<link rel="stylesheet" type="text/css" href="css/ejosoftui-framework.css" />
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formfill.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formserialize.js"></script>
+</head>
+<script type="text/javascript">
+var accInfo = "";
+var audInfo = "";
+var consInfo = "";
+var rownum = 1;
+$(document).ready(function(){
+
+	getlist({ 
+		token:sessionStorage.token,
+		//consType: "self",
+        options: {skip: 0}
+	}, "show")
+})
+
+function getlist(jsonStr, btnstatus){
+	$.post(baseurl + "/cons/getList", jsonStr, function(result,text){
+		consInfo = result.results;
+
+		var i, arrlen = consInfo.length;
+		for (i=0;i<arrlen;i++) {
+			var tabobj = $("#tr-audit-list").clone();
+			tabobj.find("#tabNo").html(rownum);
+			if(consInfo[i].unitId && consInfo[i].unitId.personalInfo && consInfo[i].unitId.personalInfo.name)
+				tabobj.find("#unitName").html(consInfo[i].unitId.personalInfo.name);
+			if(consInfo[i].inceId && consInfo[i].inceId.personalInfo && consInfo[i].inceId.personalInfo.name)
+				tabobj.find("#inceName").html(consInfo[i].inceId.personalInfo.name);
+			if(consInfo[i].servId && consInfo[i].servId.personalInfo && consInfo[i].servId.personalInfo.name)
+				tabobj.find("#servName").html(consInfo[i].servId.personalInfo.name);
+			tabobj.find("#genNum").html(consInfo[i].inceGenNum);
+			if(consInfo[i].userId && consInfo[i].userId.personalInfo && consInfo[i].userId.personalInfo.name)
+				tabobj.find("#realName").html(consInfo[i].userId.personalInfo.name);
+			if (consInfo[i].consumer) {
+				tabobj.find("#consumer-relation").html(consInfo[i].consumer.relation);
+				tabobj.find("#consumer-name").html(consInfo[i].consumer.name);
+			}
+				
+			//将ID设置和和记录_id有关
+			tabobj.find("#money").html(consInfo[i].money).attr("id","money_" + consInfo[i]._id);
+			tabobj.find("#amount").html(consInfo[i].receiptTotalAmount).attr("id","amount_" + consInfo[i]._id);
+
+			if (consInfo[i].visitDate) {
+				var sdate = new Date(consInfo[i].visitDate.start);
+				var edate = new Date(consInfo[i].visitDate.end);
+
+				var sday = sdate.getFullYear() + "-" + ((sdate.getMonth() + 1) < 10 ? '0' + (sdate.getMonth() + 1) : (sdate.getMonth() + 1)) + "-" + sdate.getDate();
+				var eday = edate.getFullYear() + "-" + ((edate.getMonth() + 1) < 10 ? '0' + (edate.getMonth() + 1) : (edate.getMonth() + 1)) + "-" + edate.getDate();
+
+				tabobj.find("#visitDate").html(sday + " 至 " + eday);
+			}
+			
+			//初审授权，无复审权限
+
+			//按钮状态控制
+			var isSubmitted = consInfo[i].status.isSubmitted;  //刚提交
+			var isRevoked = consInfo[i].status.isRevoked; 		//退回
+			var isAudited = consInfo[i].status.isAudited;		//初审
+			var isDone = consInfo[i].status.isDone;				//结束
+
+			tabobj.find("#firstaudit").show();
+			tabobj.find("#secondaudit").show();
+			tabobj.find("#backaudit").show();
+
+			if(isDone === true){
+				tabobj.find("#status").html("复审通过");
+			}else if(isRevoked === true){
+				tabobj.find("#status").html("退回");
+			}else if(isAudited === true){
+				tabobj.find("#status").html("待复审");
+			}else {
+				tabobj.find("#status").html("待初审");
+				//tabobj.find("#backaudit").hide();
+			}
+			$("#tab-audit-list").append(tabobj.show());
+
+			rownum++;//序号
+		}
+	})
+	.error(function(result,text){ 
+		alert(text +" | " + result.responseText);
+		//succinfo2("mobile", result.responseText, text); 
+	});
+}
+</script>
+<body>
+<table id="tab-audit-list" class="form-table2" cellpadding="0" cellspacing="1" border="0">
+	<tr>
+		<th style="width:30px; height: 25px; text-align: center">序号</th>
+		<th style="text-align: center; display: none;">投保单位</th>
+		<th style="text-align: center; display: none;">保险公司</th>
+		<th style="text-align: center; display: none;">服务专员</th>
+		<th style="text-align: center; display: none;">总保单号</th>
+		<th style="width: 150px; text-align: center; display: none;">用户</th>
+		<th style="width: 150px; text-align: center;">关系</th>
+		<th style="width: 150px; text-align: center;">姓名</th>
+		<th style="text-align: center">审核消费金额</th>
+		<th style="text-align: center">审核票据数量</th>
+		<th style="width: 200px; text-align: center">消费日期</th>
+		<th style="width: 100px; text-align: center">状态</th>
+	</tr>
+	<tr id="tr-audit-list" style="display:none;">
+		<td id="tabNo" style="height: 25px; text-align: center">&nbsp;</td>
+		<td id="unitName" style="display: none;">&nbsp;</td>
+		<td id="inceName" style="display: none;">&nbsp;</td>
+		<td id="servName" style="display: none;">&nbsp;</td>
+		<td id="genNum" style="display: none;">&nbsp;</td>
+		<td id="realName" style="display: none;">&nbsp;</td>
+		<td id="consumer-relation">&nbsp;</td>
+		<td id="consumer-name">&nbsp;</td>
+		<td id="money">&nbsp;</td>
+		<td id="amount">&nbsp;</td>
+		<td id="visitDate">&nbsp;</td>
+		<td id="status">&nbsp;</td>
+	</tr>
+</table>
+
+</body>
+</html>

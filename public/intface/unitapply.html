@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<title>团体批次理赔申请书</title>
+<link rel="stylesheet" type="text/css" href="css/ejosoftui-framework.css" />
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formfill.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formserialize.js"></script>
+</head>
+<script type="text/javascript">
+var consInfo = "";
+var obj = {};
+
+$(document).ready(function(){
+	//获取登录信息.
+
+
+	var jsonStr = { 
+		token:sessionStorage.token,
+		consType: "self", 
+		'status.isSubmitted':true,
+		'status.isRevoked': false,
+		'status.isAudited': false,
+        options: {skip: 0}
+	};
+
+	$.post(baseurl + "/cons/getList", jsonStr, function(result,text){
+		consInfo = result.results;
+		if (!consInfo.length) return console.log('当前无记录!');
+		if(consInfo[0].unitId && consInfo[0].unitId.personalInfo && consInfo[0].unitId.personalInfo.name)
+			$("#unitName").html(consInfo[0].unitId.personalInfo.name);
+		$("#genNum").html(consInfo[0].inceGenNum);
+		if(consInfo[0].unitId && consInfo[0].unitId.personalInfo && consInfo[0].unitId.personalInfo.contactor){
+			$("#contactor-name").html(consInfo[0].unitId.personalInfo.contactor.name);
+			$("#contactor-phone").html(consInfo[0].unitId.personalInfo.contactor.phone);
+		}
+		var i, arrLen = consInfo.length;
+		for (i=0;i<arrLen;i++) {
+			if(consInfo[i].userId){
+				obj[consInfo[i].userId._id] = obj[consInfo[i].userId._id] || {name: consInfo[i].userId.personalInfo.name, money: 0, receiptNo: 0};
+				obj[consInfo[i].userId._id].money += consInfo[i].money;
+				obj[consInfo[i].userId._id].receiptNo += consInfo[i].receiptTotalAmount;
+			}
+		}
+
+		var rownum = 0;
+		for(cons in obj){
+			rownum++;
+			if(rownum % 2 != 0) {
+				var tabobj = $("#tr-unit-apply-list").clone();
+				tabobj.find("#no1").html(rownum);
+				tabobj.find("#no2").html(rownum+1);
+				tabobj.find("#name1").html(obj[cons].name);
+				tabobj.find("#money1").html(obj[cons].money);
+				tabobj.find("#receiptNo1").html(obj[cons].receiptNo);
+				$("#tab-unit-apply-list").append(tabobj.show());
+			 }else{
+				tabobj.find("#name2").html(obj[cons].name);
+				tabobj.find("#money2").html(obj[cons].money);
+				tabobj.find("#receiptNo2").html(obj[cons].receiptNo);
+			 }
+		}
+		$("#count1").html(rownum);
+		$("#count2").html(rownum);
+		//alert(text +"信息保存成功");
+		//succinfo2("mobile", "新手机保存成功",text);
+		//$("#ele-email").html(email);
+	})
+	.error(function(result,text){ 
+		alert(text +" | " + result.responseText);
+		//succinfo2("mobile", result.responseText, text); 
+	});
+})
+
+function printdocument(){
+	window.print();
+}
+</script>
+<body>
+<div>
+      
+<form id="form1">
+    <div class="leftline rightline" style="margin-left: 1px; margin-right: 1px;">
+        <table class="form-bill" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td align="center" colspan="8">
+                    <div style="font-family: 华文楷体; font-size: x-large; height: 60px; line-height: 60px;">
+                        团体批次理赔申请书&nbsp;
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">投保单位名称</th>
+                <td colspan="2" id="unitName"> </td>
+                <th colspan="2">保单号码</th>
+                <td colspan="2" id="genNum"> </td>
+            </tr>
+
+            <tr>
+                <th colspan="2">投保单位联系人</th>
+                <td colspan="2" id="contactor-name"> </td>
+                <th colspan="2">联系电话</th>
+                <td colspan="2" id="contactor-phone"> </td>
+            </tr>
+            <tr>
+                <td colspan="8" style="height: 100px;">
+				<font style=" font-weight:bold">投保单位声明:</font><br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本公司接受本次索赔的被保险人和连带被保险人的委托(附《个人批次理赔申请书》)，为其办理理赔事宜。<br /><br />
+
+					<div>
+						<span style="padding-right:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 投保单位签章*： <font color="red">分行公章/人力资源章</font></span>
+						<span>
+						申请日期*：2015 年<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />月<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />日
+						</span>
+					</div>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="height: 60px;">
+				<font style=" font-weight:bold">赔款支付方式：</font><br /><br />
+				<div style="float: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;被保险人指定帐户转帐（总行提供的工资卡账户）</div>
+				<div style="float: left" id=""> </div>
+                </td>
+            </tr>
+            <tr>
+				<th>备注</th>
+                <td colspan="7" style="height: 60px;">“*”内容为必填项；
+                </td>
+            </tr>
+            <tr>
+                <th>理赔总人数*</th>
+                <td id="count1">&nbsp;</td>
+                <th>索赔份数*</th>
+                <td id="count2">&nbsp;</td>
+                <th>投保单位经办人*</th>
+                <td>&nbsp;</td>
+                <th>人保客服代表*</th>
+                <td>&nbsp;</td>
+            </tr>
+
+        </table>
+        <div id="grid_List">
+            <!--table id="gridTable"></table-->
+			<table id="tab-unit-apply-list" class="form-table" cellpadding="0" cellspacing="0" border="1">
+				<tr>
+					<td colspan="12" style="height: 30px; text-align: left; font-size: 14px; font-weight: bold;">
+						索赔明细表
+					</td>
+				</tr>
+				<tr>
+					<th style="height: 30px; width: 50px;">序号</th>
+					<th>被保险人姓名*</th>
+					<th>申报金额*（元）</th>
+					<th>票据*（份）</th>
+
+					<th style="height: 30px; width: 50px;">序号</th>
+					<th>被保险人姓名*</th>
+					<th>申报金额*（元）</th>
+					<th>票据*（份）</th>
+
+				</tr>
+				<tr id="tr-unit-apply-list" style="display: none;">
+					<th id="no1" style="height: 23px; line-height: 23px; width: 50px;">1</th>
+					<td id="name1" style="text-align: center;"></td>
+					<td id="money1" style="text-align: center;"></td>
+					<td id="receiptNo1" style="text-align: center;"></td>
+
+					<th id="no2" style="width: 50px;">1</th>
+					<td id="name2" style="text-align: center;"></td>
+					<td id="money2" style="text-align: center;"></td>
+					<td id="receiptNo2" style="text-align: center;"></td>
+				</tr>
+
+			</table>
+        </div>
+    </div>
+</form>
+
+    </div>
+</body>
+</html>

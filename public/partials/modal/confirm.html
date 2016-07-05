@@ -1,0 +1,12 @@
+<!-- Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="actions.cancel()"><span class="glyphicon glyphicon-remove"></span></button>
+    <div><span style="font-size:1.3em;font-family:'微软雅黑';color:#666">{{title || '确认窗口'}}</span></div>
+</div>
+<div class="modal-body">
+	<label class="h3 center-block">{{msg || '是否确认执行?'}}</label>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="actions.confirm()">确认</button>
+    <button class="btn btn-warning" ng-click="actions.cancel()">取消</button>
+</div>

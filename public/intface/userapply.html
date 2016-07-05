@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<title>个人批次理赔申请书</title>
+<link rel="stylesheet" type="text/css" href="css/ejosoftui-framework.css" />
+<script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/qrcode.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formfill.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.config.js"></script>
+<script type="text/javascript" src="scripts/ejosoft.jquery.formserialize.js"></script>
+<script type="text/javascript" src="scripts/My97DatePicker/WdatePicker.js"></script>
+</head>
+<script type="text/javascript">
+var accinfo = "";
+var inceInfo = "";
+var unitInfo = "";
+var userInfo = "";
+
+$(document).ready(function(){
+	//var formobj = $("#myform").serializeJson()
+    //document.write(formobj);
+
+
+	$.get(baseurl + "/user/getAccInfo?token=" + sessionStorage.token ,function(result){
+		accinfo = result.results;
+		inceInfo = accinfo.ince;
+		userInfo = accinfo.user;//用户信息
+    	unitInfo = accinfo.ince.unitId;//单位信息
+
+		$("#unitName").val(unitInfo.personalInfo.name);
+		$("#genNum").val(accinfo.ince.inceGenNum);
+		$("#realName").val(userInfo.personalInfo.name);
+		$("#realName2").val(userInfo.personalInfo.name);
+		$("#idNo").val(userInfo.personalInfo.idNo);
+		$("#accountNo").val(userInfo.extInfo.accountNo);
+		$("#employeeId").val(userInfo.personalInfo.employeeId);
+		$("mobile").val(userInfo.mobile);
+
+	});
+
+});
+var isSave = false;
+function saveform(){
+	//var formobj = $("#myform").serializeJson()
+	var jsonStr = {
+		token:sessionStorage.token,
+	    employeeId: userInfo.personalInfo.employeeId,
+		consumer: {
+			relation: $("#consumer-relation").val(), 
+			name: $("#consumer-name").val(),  
+			idType: "身份证",  
+			idNo: $("#consumer-idNo").val(),  
+			reId: "", 
+			mobile: $("consumer-mobile").val()
+		}, 
+		visitDate:{
+			start:$("#visitDate-start").val(),
+			end:$("#visitDate-end").val()
+		},
+        status: {  // 消费记录状态
+            isSubmitted:true,
+            isRevoked: false,
+            isAudited: false
+        },
+		incePolicyId:inceInfo._id,
+		unitId:inceInfo.unitId._id,
+	    inceId:inceInfo.inceId._id,
+	    servId:inceInfo.servId._id,
+		inceGenNum:$("#genNum").val(),
+		consType: "self",
+		money:$("#money").val(),
+		note:$("#note").val(),
+		receiptTotalAmount:$("#receiptTotalAmount").val()
+	};
+
+
+	$.post(baseurl + "/cons/applyOne", jsonStr, function(result,text){
+		alert(text +"信息保存成功");
+
+        isSave = true;
+
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: result.results.cons._id,
+            width : 100,
+            height : 100
+        });
+        //qrcode.makeCode(result.results._id);
+		//succinfo2("mobile", "新手机保存成功",text);
+		//$("#ele-email").html(email);
+	})
+	.error(function(result,text){ 
+		alert(text +" | " + result.responseText);
+		//succinfo2("mobile", result.responseText, text); 
+	});
+
+
+
+}
+
+function printdocument(){
+    if(isSave){
+        window.print();
+        //window.location.reload();
+    }
+    else
+    {
+        alert("请先保存数据.");
+    }
+}
+
+function resetform(){
+	//document.getElementById("myform").reset();
+    window.location.reload();
+}
+</script>
+<body>
+    <div>
+      
+<form id="myform">
+    <div class="leftline rightline" style="margin-left: 1px; margin-right: 1px;">
+        <!--div class="tools_bar" style="margin-top: 1px; margin-bottom: 0px;">
+            这里可以放按钮
+        </div-->
+        <table id="tb_POOrderFrom" class="form-bill" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td align="center" colspan="4">
+                    <div style="font-family: 华文楷体; font-size: x-large; height: 60px; line-height: 60px;">
+                        个人批次理赔申请书<!-- &nbsp;<button type="button" onclick="javascript:saveform();">测试提交信息</button> -->
+                    </div>
+                </td>
+                <td style="text-align: center;"><div id="qrcode" style="width:100px; height:100px;margin-right: auto; margin-left: auto;"></div></td>
+            </tr>
+            <tr>
+                <th colspan="2">投保单位名称</th>
+                <td>
+                    <input id="unitName" name="unitName" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>保险合同号</th>
+                <td>
+                    <input id="genNum" name="genNum" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+            <!--tr>
+                <th colspan="2">机构名称</th>
+                <td colspan="3" style="height: 25px;">
+                    <input id="id0001" type="text" class="txt" value="NULL" style="width:500px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />分公司
+                </td>
+            </tr> -->
+            <tr>
+				<th rowspan="3" style="text-align: center; vertical-align:middle;">华夏银行<br />员工信息<br />（被保险人）</th>
+                <th>员工姓名[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="realName" name="realName" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>身份证号[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="idNo" name="idNo" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+            <tr>
+                <th>工资卡账户姓名[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="realName2" name="realName2" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>银行账号[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="accountNo" name="accountNo" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+            <tr>
+                <th>员工ID[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="employeeId" name="employeeId" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>员工电话[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="mobile" name="mobile" readonly="true" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+			<!-- -->
+            <tr>
+				<th rowspan="3" style="text-align: center; vertical-align:middle;">亲属信息<br />（连带被保险人）<br /></th>
+                <th>与华夏银行员工关系[<font face="宋体">*</font>]</th>
+                <td colspan="3">
+                    <select id="consumer-relation" name="consumer-relation" class="select" datacol="yes" err="币别" checkexpession="NotNull" style="width: 300px;">
+                        <option value="">=====请选择与华夏银行员工关系=====</option>
+                        <option value="本人">本人</option>
+                        <option value="配偶">配偶</option>
+                        <option value="母/婚姻父母">父母/婚姻父母</option>
+                        <option value="子女">子女</option>
+                        <option value="兄弟姐妹">兄弟姐妹</option>
+                    </select>
+              </td>
+            </tr>
+            <tr>
+                <th>姓名[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="consumer-name" name="consumer-name" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>身份证号[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="consumer-idNo" name="consumer-idNo" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+            <tr>
+                <th>亲属ID[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="id0001" name="id0001" type="text" class="txt" style="width: 95%" />
+                </td>
+                <th>亲属电话[<font face="宋体">*</font>]</th>
+                <td>
+                    <input id="consumer-mobile" name="consumer-mobile" type="text" class="txt" style="width: 95%" />
+                </td>
+            </tr>
+        </table>
+		<table id="gridtable123" class="form-table" cellpadding="0" cellspacing="0" border="1">
+			<tr>
+				<td colspan="4" style="height: 30px; text-align: center">
+					特需医疗基金医疗票据明细
+				</td>
+			</tr>
+			<tr>
+				<th colspan="2" style="height: 25px; text-align: center">发票日期</th>
+				<th rowspan="2" style="height: 50px; text-align: center">发票(张)*</th>
+				<th rowspan="2" style="height: 50px; text-align: center">申请总金额*</th>
+			</tr>
+			<tr>
+				<th>开始日期*</th>
+				<th>结束日期*</th>
+			</tr>
+			<tr>
+				<td><input id="visitDate-start" name="visitDate-start" value="2015-01-01" type="text" class="txt" style="width:99%;text-align:center;" readonly="true" onclick="javascipt:WdatePicker();" /></td>
+				<td><input id="visitDate-end" name="visitDate-end" value="2015-05-10" type="text" class="txt" style="width: 99%;text-align:center;" readonly="true" onclick="javascript:WdatePicker();" /></td>
+				<td><input id="receiptTotalAmount" name="receiptTotalAmount" type="text" class="txt" style="width: 99%" /></td>
+				<td><input id="money" name="money" type="text" class="txt" style="width: 99%" /></td>
+			</tr>
+			<tr>
+				<th>备注</th>
+				<td colspan="3"><input id="note" name="note" type="text" class="txt" style="width: 99%" /></td>
+			</tr>
+		</table>
+        <table class="form-bill" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td style="height: 150px;">
+                申请人声明与授权：<br />
+1、  本人授权投保单位向人保寿险办理本人及连带被保险的医疗保险索赔事宜；本人同意本申请书所列理赔申请人为本人的连带被保险人，连带被保险人的理赔金额由本人账户金额划转；<br />
+2、  上述各项填写信息及本人提供的一切资料，均完全属实，如虚假或隐瞒实情，人保寿险有权拒付保险金赔付，并依法追究法律责任；<br />
+3、  本人授权任何医院及知情的单位和个人均可向人保寿险提供与本理赔申请有关的一切资料，由此产生的相应法律后果由本人承担。<br />
+4、 标有“*”的内容为必填项，如果内容填写不全，将不收取理赔资料。如果报销票据仅为员工，则亲属信息不必填写。<br /><br />
+
+员工签名*：<input id="id0001" type="text" class="txt" style="width:150px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />申请日期*：2015 年<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />月<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />日
+
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 100px;">
+                本人（连带被保险人）同意并授权人保寿险将本人的理赔款汇入申请理赔的华夏银行员工（被保险人）的银行账户。<br /><br />
+
+员工签名*：<input id="id0001" type="text" class="txt" style="width:150px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />申请日期*：2015 年<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />月<input id="id0001" type="text" class="txt" style="width:50px;border: 1px solid #fff; border-bottom: 1px solid #A8A8A8;height: 18px;line-height: 18px;" />日
+
+                </td>
+            </tr>
+
+        </table>	</div>
+</form>
+    </div>
+</body>
+</html>

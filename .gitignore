@@ -1,0 +1,8 @@
+logs/
+temp/
+*.log
+*.rdb
+stdout
+bower_components
+build/
+node_modules/

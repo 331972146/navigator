@@ -1,0 +1,434 @@
+/*
+ * Globals
+ */
+  
+  /*.custom-tab-heading {
+    color: #DDD;
+  }*/
+  .title-div a.custom-title,
+  .title-div a.custom-title:hover,
+  .title-div a.custom-title:focus {
+    text-decoration: none;
+    /*color: #000;*/
+  }
+  .title-div {
+    font-size: 2em;  /*在同一个作用域中(本元素选择器选中的元素及其子孙元素), 一旦字体大小改变, em也同步改变, 假设初始字体大小为16px(即1em=16px), 这里font-size=2em就将字体大小改为32px, 同时, 从这里开始, 1em也变为32px(em就是以字体大小为单位的), 导致后面所有的以em为单位的值变为原来的2倍, 即后面的1em实际等价于设置字体大小前的2em*/
+    font-family: '微软雅黑';
+    padding: 1em 0.5em;
+    color: #555;
+    background-color: #EEE;
+  }
+  .top-bar {
+    height: 2.3em;
+    /*background-color: #f5f5f5*/
+    background: #f5f5f5 url(/res/img/top_line.jpg) repeat-x;
+  }
+  a.btn-link + button.btn-link {
+    padding-left: 0;
+  }
+  .custom-middle {
+    display: inline-block;  /*给行内元素(非块级元素block)设置padding, margin, height等属性时, 必须设置为行内块display: inline-block才能生效*/
+    margin-top: 8px;
+  }
+  .title-div {
+    font-size: 1.2em;  /*在同一个作用域中(本元素选择器选中的元素及其子孙元素), 一旦字体大小改变, em也同步改变, 假设初始字体大小为16px(即1em=16px), 这里font-size=2em就将字体大小改为32px, 同时, 从这里开始, 1em也变为32px(em就是以字体大小为单位的), 导致后面所有的以em为单位的值变为原来的2倍, 即后面的1em实际等价于设置字体大小前的2em*/
+    font-family: '微软雅黑';
+    /*padding: 0 0.5em;*/
+    /*color: #555;*/
+    /*background-color: #eee;*/
+  }
+  .page-header {
+    border-bottom: 0;
+    /*padding: 0;*/
+  }
+  .navbar {
+    margin-bottom: 10px;
+  }
+  .word-break {
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+
+  .glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+  }
+
+  @-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+  }
+
+  @keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+  }
+
+/* --------------- tabs-left, tabs-right, tabs-below --------------- 
+ */
+  .tabs-below > .nav-tabs,
+  .tabs-right > .nav-tabs,
+  .tabs-left > .nav-tabs,
+  .tabs-below > .nav-pills,
+  .tabs-right > .nav-pills,
+  .tabs-left > .nav-pills {
+    border-bottom: 0;
+    /*height: 100em;*/  /*这里要设置固定高度, 防止content里面的内容跳到左边, 不采用这种方式, 而是给.*-content设置padding-left: 12em*/
+  }
+
+  .tab-content > .tab-pane,
+  .pill-content > .pill-pane {
+    display: none;
+  }
+
+  .tab-content > .active,
+  .pill-content > .active {
+    display: block;
+  }
+
+  @media (min-width: 768px) and (max-width: 1280px) {
+    .tabs-left > .tab-content > .active,
+    .tabs-left > .pill-content > .active {
+      padding-left: 7.9em;  /*这里设置padding或margin, 防止content里面的内容跳到左边*/
+    }
+    .tabs-right > .tab-content > .active,
+    .tabs-right > .pill-content > .active {
+      padding-right: 7.9em;  /*这里设置padding或margin, 防止content里面的内容跳到右边*/
+    }
+  }
+
+  @media (min-width: 1281px) {
+    .tabs-left > .tab-content > .active,
+    .tabs-left > .pill-content > .active {
+      padding-left: 8em;  /*这里设置padding或margin, 防止content里面的内容跳到左边*/
+    }
+    .tabs-right > .tab-content > .active,
+    .tabs-right > .pill-content > .active {
+      padding-right: 8em;  /*这里设置padding或margin, 防止content里面的内容跳到右边*/
+    }
+  }
+
+  .tabs-below > .nav-tabs,
+  .tabs-below > .nav-pills {
+    border-top: 1px solid #ddd;
+  }
+
+  .tabs-below > .nav-tabs > li,
+  .tabs-below > .nav-pills > li {
+    margin-top: -1px;
+    margin-bottom: 0;
+  }
+
+  .tabs-below > .nav-tabs > li > a,
+  .tabs-below > .nav-pills > li > a {
+    -webkit-border-radius: 0 0 4px 4px;
+       -moz-border-radius: 0 0 4px 4px;
+            border-radius: 0 0 4px 4px;
+  }
+
+  .tabs-below > .nav-tabs > li > a:hover,
+  .tabs-below > .nav-tabs > li > a:focus,
+  .tabs-below > .nav-pills > li > a:hover,
+  .tabs-below > .nav-pills > li > a:focus {
+    border-top-color: #ddd;
+    border-bottom-color: transparent;
+  }
+
+  .tabs-below > .nav-tabs > .active > a,
+  .tabs-below > .nav-tabs > .active > a:hover,
+  .tabs-below > .nav-tabs > .active > a:focus,
+  .tabs-below > .nav-pills > .active > a,
+  .tabs-below > .nav-pills > .active > a:hover,
+  .tabs-below > .nav-pills > .active > a:focus {
+    border-color: transparent #ddd #ddd #ddd;
+  }
+
+  .tabs-left > .nav-tabs > li,
+  .tabs-right > .nav-tabs > li,
+  .tabs-left > .nav-pills > li,
+  .tabs-right > .nav-pills > li {
+    float: none;
+  }
+
+  .tabs-left > .nav-tabs > li > a,
+  .tabs-right > .nav-tabs > li > a,
+  .tabs-left > .nav-pills > li > a,
+  .tabs-right > .nav-pills > li > a {
+    min-width: 74px;
+    margin-right: 0;
+    margin-bottom: 3px;
+  }
+
+  .tabs-left > .nav-tabs,
+  .tabs-left > .nav-pills {
+    float: left;
+    margin-right: 19px;
+    border-right: 1px solid #ddd;
+  }
+
+  .tabs-left > .nav-tabs > li > a,
+  .tabs-left > .nav-pills > li > a {
+    margin-right: -1px;
+    -webkit-border-radius: 4px 0 0 4px;
+       -moz-border-radius: 4px 0 0 4px;
+            border-radius: 4px 0 0 4px;
+  }
+
+  .tabs-left > .nav-tabs > li > a:hover,
+  .tabs-left > .nav-tabs > li > a:focus,
+  .tabs-left > .nav-pills > li > a:hover,
+  .tabs-left > .nav-pills > li > a:focus {
+    border-color: #eeeeee #dddddd #eeeeee #eeeeee;
+  }
+
+  .tabs-left > .nav-tabs .active > a,
+  .tabs-left > .nav-tabs .active > a:hover,
+  .tabs-left > .nav-tabs .active > a:focus,
+  .tabs-left > .nav-pills .active > a,
+  .tabs-left > .nav-pills .active > a:hover,
+  .tabs-left > .nav-pills .active > a:focus {
+    border-color: #ddd transparent #ddd #ddd;
+    *border-right-color: #ffffff;
+  }
+
+  .tabs-right > .nav-tabs,
+  .tabs-right > .nav-pills {
+    float: right;
+    margin-left: 19px;
+    border-left: 1px solid #ddd;
+  }
+
+  .tabs-right > .nav-tabs > li > a,
+  .tabs-right > .nav-pills > li > a {
+    margin-left: -1px;
+    -webkit-border-radius: 0 4px 4px 0;
+       -moz-border-radius: 0 4px 4px 0;
+            border-radius: 0 4px 4px 0;
+  }
+
+  .tabs-right > .nav-tabs > li > a:hover,
+  .tabs-right > .nav-tabs > li > a:focus,
+  .tabs-right > .nav-pills > li > a:hover,
+  .tabs-right > .nav-pills > li > a:focus {
+    border-color: #eeeeee #eeeeee #eeeeee #dddddd;
+  }
+
+  .tabs-right > .nav-tabs .active > a,
+  .tabs-right > .nav-tabs .active > a:hover,
+  .tabs-right > .nav-tabs .active > a:focus,
+  .tabs-right > .nav-pills .active > a,
+  .tabs-right > .nav-pills .active > a:hover,
+  .tabs-right > .nav-pills .active > a:focus {
+    border-color: #ddd #ddd #ddd transparent;
+    *border-left-color: #ffffff;
+  }
+/* --------------- tabs-left, tabs-right, tabs-below ---------------  
+ */
+
+/* Links */
+
+
+/* Custom default button */
+  .custom-button-width {
+    width: 5em;
+  }
+
+/*
+ * Base structure
+ */
+
+
+/* Extra markup and styles for table-esque vertical and horizontal centering */
+
+
+/* Padding for spacing */
+  .custom-padding-top {
+    padding-top: 0.3em;
+  }
+  .custom-padding-vertical {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+  .cutsom-left {
+    padding-left: 5%;
+  }
+  .custom-top ul.nav-pills {
+    padding-top: 2em;
+  }
+  .no-padding {
+    padding: 0;
+  }
+  .no-padding-vertical {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .padding-top-3 {
+    padding-top: 3em;
+  }
+
+/* Margin for spacing */
+  .no-margin-top {
+    margin-top: 0;
+  }
+
+  .text-indent {
+    text-indent: 2em;
+  }
+  .text-wrap {
+    text-align: justify;  /*(火狐)*/
+    /*text-justify: distribute;*/  /*(IE)*/
+  }
+
+/*
+ * Header
+ */
+  .dropdown-menu {
+    z-index: 9999;
+  }
+
+/*
+ * Cover
+ */
+
+
+/*
+ * Footer
+ */
+
+
+/*
+ * Affix and center
+ */
+
+/* --------------- ui-Grid --------------- 
+ */
+  .grid {
+    /*width: 100%;*/
+    height: 500px;
+  }
+
+/* --------------- .html --------------- 
+/*
+ * common/login.html
+ */
+  @media (min-width: 1096px) {
+    .login-area {
+      right: 0.5em;
+      padding: 5% 0;
+    }
+  }
+
+  .modal-post-preview {
+    min-width: 80%;
+  }
+
+  .fix-right {
+    position: fixed;
+    top: 30%;
+    right: 2em;
+  }
+
+  .fix-right-2 {
+    position: fixed;
+    top: 60%;
+    right: 2em;
+  }
+
+
+
+/*post*/
+  .post-tags {
+    background-color: #F7FF96;
+  }
+  .modal-post-preview {
+    min-width: 80%;
+  }
+
+  .drop-box {
+    background: #F8F8F8;
+    border: 0.5em dashed #DDD;
+    width: 100%;
+    height: 6em;
+    text-align: center;
+    padding-top: 1.5em;
+    margin-top: 0.5em;
+  }
+  .dragover {  /*如果没有设置drag-over-class属性, 默认为dragover类*/
+    border: 5px dashed blue;
+  }
+  .acceptClass {
+    border: 5px dashed blue;
+  }
+  .rejectClass {
+    border: 5px dashed red;
+  }
+  .min-height {
+    min-height: 4em;
+  }
+  .post-thumb-contain {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+  .post-thumb {
+    max-height: 9em;
+    max-width: 100%;
+    border: 0.1em dashed #DDD;
+    margin-left: 0.2em;
+  }
+  .float-above-img {
+    position: absolute;  /*针对父辈元素中第一个(向上冒泡)被定位(position: relative;也可以)的元素的绝对位置, 所以需要对目标元素加定位css(这里是.post-thumb-contain)*/
+    top: 2px;
+    left: 0.3em;
+    /*width: 100%;*/
+    width: 97%;
+    background: #71E5F1;
+    opacity: 0.5;
+    padding: 10px;
+  }
+  .icon-right {
+    position: absolute;
+    top: 2px;
+    right: 0.3em;
+  }
+  .icon-left {
+    position: absolute;
+    top: 2px;
+    left: 0.3em;
+  }
+  span.inline-block.icon-left {
+    padding: 10px;
+  }
+  /*.animate-show {
+    opacity: 1;
+  }
+  .animate-show.ng-hide-add.ng-hide-add-active,
+  .animate-show.ng-hide-remove.ng-hide-remove-active {
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+  }
+  .animate-show.ng-hide {
+    line-height: 0;
+    opacity: 0;
+    padding: 0 10px;
+  }*/
+
+  
+
+/* --------------- ueditor(angular ueditor) --------------- 
+ */
+  div.ueditor > div.edui-editor.edui-default,
+  div.ueditor > div.edui-editor.edui-default > div.edui-editor-iframeholder.edui-default {
+    width: 100% !important;  /*善用!important, 最高优先级, 可以覆盖元素中的直接style定义; 如本例: 由代码生成的自带style属性的html元素必须用这个才能覆盖其style*/
+  }
+
+  .form-group.form-inline-ueditor-div {  /*如果是在bootstrap-ui的.form-inline元素中, 则需要设置.form-group为宽度100%, 否则宽度会缩小*/
+    width: 100%;
+  }
+
+/* --------------- directives --------------- 
+ */
+  .form-group.custom-padding-top .glyphicon.glyphicon-remove {
+    top: 0.3em;
+  }

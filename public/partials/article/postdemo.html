@@ -1,0 +1,20 @@
+<div class="container-fluid">
+    <form method="post" action="?">
+        标题：<br />
+        <input type="text" name="title" maxlength="12" size="20" required="required" />
+        类型：<select name='type'>
+            <option value="aaa">aaa</option>
+        </select>
+        动作：
+        <input type="text" list="actions" size="10" name="action"/>
+        标签：<br />
+        <input type="text" name="tag1" />
+        <input type="text" name="tag2" />
+        <input type="text" name="tag3" /><br />
+        正文：<br />
+        <!-- 加载UEditor编辑器的容器 -->
+        <!-- <script id="container" name="post" type="text/plain"></script> -->
+        <div class="ueditor" name="post" ng-model="content" ready="ueReady" config="ueConfig" required><!-- 这个元素中不能出现id属性, 否则就报错Cannot read property 'length' of undefined, Cannot set property 'innerHTML' of null --></div>
+        <input type="submit" value="发表" />
+    </form>
+</div>

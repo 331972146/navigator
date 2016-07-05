@@ -1,0 +1,36 @@
+<ng-include src="'/partials/common/header.html'"></ng-include>
+
+<!-- <link rel="styleSheet" href="/test/ince/css/ejosoftui-framework.css"/> -->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <uib-tab heading="账户信息" select="tabShown[0] = !tabShown[0]" deselect="tabShown[0] = !tabShown[0]">
+          <iframe src="intface/accountinfouser.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"  class="col-md-12" style="height: 400px;"></iframe>
+        </uib-tab>
+        <uib-tab heading="消费查询" select="tabShown[1] = !tabShown[1]" deselect="tabShown[1] = !tabShown[1]">
+            <div class="form-group">
+              <iframe id="unitapply" src="intface/conssearch.html" frameborder="0" marginheight="0" marginwidth="0" class="col-md-12" style="height: 750px;"></iframe>
+            </div>
+        </uib-tab>
+        <uib-tab heading="信息修改" select="tabShown[2] = !tabShown[2]" deselect="tabShown[2] = !tabShown[2]">
+          <iframe src="intface/useredit.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+        <uib-tab heading="理赔申请" select="tabShown[3] = !tabShown[3]" deselect="tabShown[3] = !tabShown[3]">
+          <div class="btn-group" style="padding: 0px 0px 5px 15px">
+            <button type="button" class="btn btn-success" onclick='javascript:document.getElementById("userpersonapply").contentWindow.saveform();' style="text-align:center;">保存申请</button>
+            <button type="button" class="btn btn-success" onclick='javascript:document.getElementById("userpersonapply").contentWindow.printdocument();' style="text-align:center;">打印申请</button>
+            <button type="button" class="btn btn-inverse" onclick='javascript:document.getElementById("userpersonapply").contentWindow.resetform();'>重置</button>
+          </div>
+
+          <div class="form-group">
+            <iframe id="userpersonapply" src="intface/userapply.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 800px;"></iframe>
+          </div>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>

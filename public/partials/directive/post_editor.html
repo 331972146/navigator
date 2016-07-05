@@ -1,0 +1,84 @@
+<div class="container-fluid">
+  <form class="form-inline">
+    <div class="col-md-7 col-xs-12 no-padding-right margin-bottom">
+      <div class="input-group has-feedback" ng-class="{'has-success': post.title, 'has-error': !post.title}">
+        <span class="input-group-addon" id="basic-addon">标题:</span>
+        <input type="text" class="form-control" id="title" name="title" ng-model="post.title" maxlength="100">
+        <button-clear-input input="post.title"></button-clear-input><!-- 如果是在input-group组中, 删除输入的按钮需要设置css以正常工作(.input-group .glyphicon-remove.form-control-feedback) -->
+      </div>
+    </div>
+
+    <div class="col-md-5 col-xs-12 no-padding-left margin-bottom">
+      <div class="input-group has-feedback padding-left" ng-class="{'has-success': post.subTitle, 'has-error': !post.subTitle}">
+        <span class="input-group-addon" id="basic-addon1">副标题:</span>
+        <input type="text" class="form-control" id="subTitle" name="subTitle" ng-model="post.subTitle" maxlength="100">
+        <button-clear-input input="post.subTitle"></button-clear-input>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-4 no-padding-right margin-bottom">
+        <div class="input-group has-success has-feedback">
+          <span class="input-group-addon">文章类型:</span>
+          <select id="type" class="form-control padding-right" ng-options="type | postType for type in config.types" ng-model="post.type"></select>
+        </div>
+      </div>
+
+
+       <!-- <div class="row margin-bottom"> -->
+      <div class="col-lg-4 col-md-5 col-sm-6 col-xs-6 margin-bottom">
+        <button type="file" class="btn btn-info" ngf-select ngf-change="actions.fileSelected($files, $event)" ngf-multiple="true" ngf-capture="'other'" accept="image/*" ngf-accept="'image/*'" ng-model-rejected="rejFiles">
+          选择图片
+        </button>
+        <button type="button" class="btn btn-primary" ng-click="actions.clearFiles()"><!-- 不能在这里直接files = null, $scope.files没有被设置为null, 为什么? -->
+          清除
+        </button>
+        <button type="button" class="btn btn-warning" ng-click="actions.uploadFiles()">
+          上传
+        </button>
+        <div class="drop-box" ngf-drop ngf-select ngf-change="actions.fileDropped($files, $event, $rejectedFiles)" ngf-multiple="true" accept="image/*" ngf-accept="'image/*'" ng-model-rejected="rejFiles" ngf-allow-dir="false" ngf-drag-over-class="{accept:'acceptClass', reject:'rejectClass', delay:100}" ngf-drop-available="dropSupported" ngf-stop-propagation="true" ngf-hide-on-drop-not-available="true">
+          可拖入图片文件
+        </div>
+        <div ngf-no-file-drop>您的浏览器不支持拖拽文件</div>
+      </div>
+      <div class="col-lg-8 col-md-7 col-sm-6 col-xs-6 margin-bottom">
+        <div ng-repeat="img in temp.files" class="inline-block post-thumb-contain" ng-mouseenter="img.showBar = true" ng-mouseleave="img.showBar = false">
+          <span class="glyphicon icon-left inline-block bg-warning" ng-class="{'glyphicon-ok': img.uploaded, 'text-success': img.uploaded, 'glyphicon-exclamation-sign': img.exceeded, 'text-danger': img.exceeded}" ng-show="img.uploaded || img.exceeded">
+          </span>
+          <input class="icon-left" type="radio" ng-model="post.selectedImg" ng-show="img.uploaded" ng-value="img.fileObj">
+          <div class="inline-block float-above-img animate-show" ng-show="img.showBar && !img.uploaded">
+            <span class="glyphicon glyphicon-remove icon-right text-danger" ng-click="actions.rmImg($index)"></span>
+          </div>
+          <img class="img-rounded post-thumb" ngf-src="img" ngf-default-src="'res/img/nopic.gif'" ngf-accept="'image/*'">
+        </div>
+        <div ng-repeat="img in post.resources.slides" class="inline-block post-thumb-contain">
+          <span class="glyphicon glyphicon-ok text-success icon-left inline-block bg-warning">
+          </span>
+          <input class="icon-left" type="radio" ng-model="post.selectedImg" ng-value="img">
+          <img class="img-rounded post-thumb" ng-src="{{img.url}}">
+        </div>
+      </div>
+    <!-- </div> -->
+
+    <div class="form-group has-feedback has-success custom-padding-top form-inline-ueditor-div">
+      <label class="control-label" for="post">正文: </label>
+      <!-- 加载UEditor编辑器的容器 -->
+      <!-- <script id="container" name="post" type="text/plain"></script> -->
+      <div class="ueditor" name="post" ng-model="post.content" ready="ueReady" config="ueConfig" required><!-- 这个angular ueditor封装的元素中不能出现id属性, 否则就报错Cannot read property 'length' of undefined, Cannot set property 'innerHTML' of null --></div>
+    </div>
+
+
+
+
+    <!-- 类型：<select name='type'>
+        <option value="aaa">aaa</option>
+    </select>
+    动作：
+    <input type="text" list="actions" size="10" name="action"/><br />
+    标签：<br />
+    <input type="text" name="tag1" />
+    <input type="text" name="tag2" />
+    <input type="text" name="tag3" /><br /> -->
+    
+    <button type="button" class="btn btn-success" ng-click="actions.post()">发表</button>
+  </form>
+</div>

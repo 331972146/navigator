@@ -1,0 +1,80 @@
+<ng-include src="'/partials/common/header.html'"></ng-include>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-1 col-sm-offset-1 col-xs-offset-0 custom-edge">
+      <uib-tabset vertical="false" justified="false" type="pills" class="tabs-left custom-top">
+        <uib-tab heading="账户信息" select="tabShown[0] = !tabShown[0]" deselect="tabShown[0] = !tabShown[0]">
+          <iframe src="intface/accountinfo.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+        <uib-tab heading="专员操作" select="tabShown[0] = !tabShown[0]; actions.userInit()" deselect="tabShown[0] = !tabShown[0]">
+          <form class="form-inline custom-padding-vertical">
+            <button type="button" class="btn btn-success" ng-click="actions.addNewUser()">新增专员</button>
+            <button type="button" class="btn btn-success" ng-click="actions.qRemoveUsers()" ng-class="{'disabled': userQueryGridApi.selection.getSelectedRows().length === 0}">删除专员</button>
+          </form>
+          <div id="userQueryGrid" ui-grid="userQueryGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection class="grid" ng-if="tabShown[0]"></div>
+        </uib-tab>
+        <uib-tab heading="保单查询" select="tabShown[1] = !tabShown[1]; actions.inceInit()" deselect="tabShown[1] = !tabShown[1]">
+          <form class="form-inline custom-padding-vertical">
+            <div class="btn-group">
+              <button type="button" class="btn btn-success" ng-click="actions.inceExport()" ng-class="{'disabled': inceQueryData.length === 0}">导出保单</button>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.rowType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '所有行', value: 'all'}">所有行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '可见行', value: 'visible'}">可见行</a></li>
+                  <li><a href="" ng-click="exportOpts.rowType = {title: '选中行', value: 'selected'}">选中行</a></li>
+                </ul>
+              </div>
+              <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-success uib-dropdown-toggle" uib-dropdown-toggle ng-disabled="inceQueryData.length === 0">
+                  {{exportOpts.colType.title}}<span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                  <li><a href="" ng-click="exportOpts.colType = {title: '所有列', value: 'all'}">所有列</a></li>
+                  <li><a href="" ng-click="exportOpts.colType = {title: '可见列', value: 'visible'}">可见列</a></li>
+                </ul>
+              </div>
+            </div>
+          </form>
+          <div id="inceQueryGrid" ui-grid="inceQueryGridOptions" ui-grid-exporter ui-grid-edit ui-grid-row-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-save-state ui-grid-selection ui-grid-infinite-scroll class="grid" ng-if="tabShown[1]"></div>
+        </uib-tab>
+        <uib-tab heading="内容发布" select="tabShown[2] = !tabShown[2]; actions.postInit()" deselect="tabShown[2] = !tabShown[2]" ng-if="false">
+          <!-- <div class="container-fluid"> -->
+          <div class="container-fluid" ng-if="tabShown[2]">
+            <form>
+              <div class="form-group has-feedback" ng-class="{'has-success': post.title, 'has-error': !post.title}">
+                <label class="control-label" for="title">标题: </label>
+                <input type="text" class="form-control" id="title" name="title" ng-model="post.title" maxlength="12">
+                <button-clear-input input="post.title"></button-clear-input>
+              </div>
+              <!-- 类型：<select name='type'>
+                  <option value="aaa">aaa</option>
+              </select>
+              动作：
+              <input type="text" list="actions" size="10" name="action"/><br />
+              标签：<br />
+              <input type="text" name="tag1" />
+              <input type="text" name="tag2" />
+              <input type="text" name="tag3" /><br /> -->
+              <div class="form-group has-feedback has-success">
+                <label class="control-label" for="post">正文: </label>
+                <!-- 加载UEditor编辑器的容器 -->
+                <!-- <script id="container" name="post" type="text/plain"></script> -->
+                <div class="ueditor" name="post" ng-model="post.content" ready="ueReady" config="ueConfig" required><!-- 这个angular ueditor封装的元素中不能出现id属性, 否则就报错Cannot read property 'length' of undefined, Cannot set property 'innerHTML' of null --></div>
+              </div>
+              <button type="button" class="btn btn-success" ng-click="actions.post()">发表</button>
+            </form>
+          </div>
+        </uib-tab>
+        <uib-tab heading="信息修改" select="tabShown[3] = !tabShown[3]" deselect="tabShown[3] = !tabShown[3]">
+          <iframe src="intface/useredit.html" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes"  class="col-md-12" style="height: 600px;"></iframe>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<ng-include src="'/partials/common/footer.html'"></ng-include>
